@@ -18,12 +18,25 @@
 
 #define MUX_TIME            5       //Tiempo de multiplexado
 #define PINES_MUX           PORTA   //Pines que activaran los display
-#define DISPLAY_MASK        0x0F    // Bits 0-3 para displays(Para la mascara de seguridad)
+#define DISPLAY_MASK        0xF8    // Bits 0-3 para displays(Para la mascara de seguridad)
 #define PORT_VISUALIZADOR   PORTD   //Puerto por donde se visualizara los displays
 #define NUM_DISPLAY         3       //Cantidad de display utilizados 
 
+#define BUTTON_START_STOP   PORTBbits.RB0
+#define BUTTON_35W          PORTBbits.RB1 
+#define BUTTON_50W          PORTBbits.RB2
+
+#define RELAY_35W           PORTCbits.RC0
+#define RELAY_50W           PORTCbits.RC1
+
 uint32_t milisegundos = 0;
 uint8_t display_state = 0;  //Estado de cada pin que activa cada display
+bool on_off = false;
+static bool temporizador_activo = true; 
+static uint8_t cont = 0;
+static uint8_t unidades = 0;
+static uint8_t decenas = 8;
+static uint8_t centenas = 1;
 // Tabla de caracteres (ánodo común)
 static const uint8_t DATOS[] = {
     // Números 0-9 (invertidos)
@@ -70,19 +83,48 @@ static const uint8_t DATOS[] = {
     0xBF, // Guión (-) (0x40 invertido)
     0x7F, // Punto decimal (.) (0x80 invertido)
     0x9C, // Grados (°) (0x63 invertido)
-    0xFF  // Espacio (apagado) (0x00 invertido)
+    0xFF, // Espacio (apagado) (0x00 invertido)
+    //ESPECIALES LIMPIADOR
+    0xFE,   //SOMBRERO
+    0xF7,   //GUIO_BAJO
+    0xF9    //BARRA_VERTICAL
 };
+typedef enum{
+    ms_tiempo_ninguno = 0,
+    ms_tiempo_35w,
+    ms_tiempo_50w
+}MENSAJE_TIEMPO;
+MENSAJE_TIEMPO ms_tiempo = ms_tiempo_ninguno;
+typedef enum{
+    modo_35w = 0,
+    modo_50w
+}MODO;
+MODO modo_proceso = modo_35w;
+
+typedef enum{
+    MS_INIT = 0,
+    MS_P35W,
+    MS_P50W,
+    MS_ON
+}MENSAJES;
+MENSAJES ms_state = MS_INIT;
+
 typedef enum{
     CHAR_0 = 0,
     CHAR_3 = 3,
     CHAR_5 = 5,
     CHAR_F = 15,
+    CHAR_N = 23,
     CHAR_O = 24,
+    CHAR_I = 18,
+    CHAR_P = 25,
     CHAR_CLEAR = 39,
-    CHAR_GUION = 36
+    CHAR_GUION = 36,
+    CHAR_GSOMB = 40,
+    CHAR_GBAJO = 41,
+    CHAR_BVERTICAL = 42
 }CARACTER;
-
-CARACTER display_buffer[NUM_DISPLAY] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
+CARACTER display_buffer[NUM_DISPLAY] = {CHAR_O,CHAR_F,CHAR_F};
 
 /* ============================================
  *      Prototipo de funcion
@@ -91,13 +133,29 @@ CARACTER display_buffer[NUM_DISPLAY] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
 void configurar_hardware(void);
 void configurar_tmr0(void);
 uint32_t millis(void);
-//void __interrupt() INT_TMR0(void);
+void __interrupt() INT_TMR0(void);
 void visualizar_display(void);
+void mostrar_mensajes(const CARACTER *mensaje, uint8_t longitud);
+void deferentes_mensajes(void);
+void efecto_titilar(const CARACTER *mensaje, uint8_t longitud, uint32_t tiempo);
+void botones(void);
+void proceso_on(void);
+void actualizar_temporizador(void);
+void convertir_tiempo_a_display(void);
+void verificar_fin_temporizador(void);
+void incremento_temporizador(void);
+void decremento_temporizador(void);
+
 void configurar_hardware(void){
     TRISA = 0x00;
     TRISD = 0x00;
-    PORTA = 0x00;
-    PORTD = 0x00;
+    TRISC = 0X00;
+    OPTION_REGbits.nRBPU = 0;
+    TRISB = 0XFF;
+    PORTA = 0x07;
+    PORTD = 0xFF;
+    PORTB = 0X00;
+    PORTC = 0X00;
 }
 void configurar_tmr0(void){
     //Configurarndo el TMR0
@@ -130,19 +188,266 @@ void visualizar_display(void){
     if((now - last_mux) >= MUX_TIME){
         last_mux = now;
         //Apagar todos los display
-        PINES_MUX &= ~DISPLAY_MASK;  // Solo afecta bits de displays
+        PINES_MUX = 0XFF;  // Solo afecta bits de displays
         //Mostrar el caracter actual
         PORT_VISUALIZADOR = DATOS[display_buffer[display_state]];//Aqui dice que primero ingrese al array display_buffer tomara un numero y con ese numero tomara el valor del array DATOS 
         //Activar el display correspondiente
-        PINES_MUX |= ~(1 << display_state); // Enciende el bit correspondiente para cada display con seguridad implementando un or como mascara esto evitara el ghosting
+        PINES_MUX = (unsigned char)(~(1 << display_state)); // Enciende el bit correspondiente para cada display con seguridad implementando un or como mascara esto evitara el ghosting
         //Avanzar al siguiente display
         display_state = (display_state + 1) % NUM_DISPLAY; //Con esta sentencia aumente display_state 1,2,3,4 a la vez controla el limite que es la cantidad de display utilizados cuando llega a 4 automaticamente lo lleva al primer displey   
     }
+}
+void mostrar_mensajes(const CARACTER *mensaje, uint8_t longitud){
+    for(uint8_t i = 0; i < NUM_DISPLAY; i++){
+        display_buffer[i] = (i < longitud) ? mensaje[i]: CHAR_CLEAR;
+    }
+}
+void diferentes_mensajes(void){
+    static const CARACTER sec1[] = {CHAR_GBAJO,CHAR_GBAJO,CHAR_GBAJO};
+    static const CARACTER sec2[] = {CHAR_CLEAR,CHAR_CLEAR,CHAR_BVERTICAL};
+    static const CARACTER sec3[] = {CHAR_GSOMB,CHAR_GSOMB,CHAR_GSOMB};
+    static const CARACTER sec4[] = {CHAR_I,CHAR_CLEAR,CHAR_CLEAR};
+    
+    static const CARACTER ms_para_35w[] = {CHAR_P,CHAR_3,CHAR_5};
+    static const CARACTER ms_para_50w[] = {CHAR_P,CHAR_5,CHAR_0};
+    static const CARACTER ms_inicio_proceso[] = {CHAR_CLEAR, CHAR_O, CHAR_N};
+
+    uint32_t now = millis();
+    static uint32_t last_change = 0;
+    static uint8_t mostrar_ms = 0;
+    if(ms_state == MS_INIT && on_off == false && ms_tiempo == ms_tiempo_ninguno){
+        if((now - last_change) >= 300){
+            last_change = now;
+            mostrar_ms = (mostrar_ms + 1) % 4;
+            switch(mostrar_ms){
+                case 0: mostrar_mensajes(sec1,3); break;
+                case 1: mostrar_mensajes(sec2,3); break;
+                case 2: mostrar_mensajes(sec3,3); break;
+                case 3: mostrar_mensajes(sec4,3); break;
+            }
+        }
+    }
+    if(ms_tiempo == ms_tiempo_ninguno){
+        switch(ms_state){
+        case MS_P35W:
+                efecto_titilar(ms_para_35w,3,500);
+                if(cont >=5){cont = 0;ms_state = MS_INIT; ms_tiempo = ms_tiempo_35w;}
+            break;
+        case MS_P50W:
+            efecto_titilar(ms_para_50w,3,500);
+            if(cont >=5){cont =0;ms_state = MS_INIT; ms_tiempo = ms_tiempo_50w;}
+            break;
+        }
+    }
+    if(ms_tiempo == ms_tiempo_35w && ms_state == MS_INIT){
+        convertir_tiempo_a_display();
+    }
+    if(ms_tiempo == ms_tiempo_50w && ms_state == MS_INIT){
+        convertir_tiempo_a_display();
+    }
+    if(ms_state == MS_ON){
+        efecto_titilar(ms_inicio_proceso,3,500);
+        if(cont>=5){cont = 0;ms_state = MS_INIT; on_off = !on_off;}
+    }
+}
+void efecto_titilar(const CARACTER *mensaje, uint8_t longitud, uint32_t tiempo){
+    static uint32_t last_change = 0;
+    static bool mostrar = true;
+    
+    uint32_t now = millis();
+    if ((now - last_change) >= tiempo) {
+        last_change = now;
+        mostrar = !mostrar;
+        cont ++;
+        if(mostrar) {
+            mostrar_mensajes(mensaje, longitud);
+        } else {
+            const CARACTER apagado[NUM_DISPLAY] = {CHAR_CLEAR, CHAR_CLEAR, CHAR_CLEAR};
+            mostrar_mensajes(apagado, NUM_DISPLAY);
+        }
+    }
+}
+
+void botones(void){
+    //Boton para 35w
+    if(BUTTON_35W == false && on_off == false){
+        __delay_ms(20);
+        if(BUTTON_35W == false && on_off == false){
+            ms_state = MS_P35W;
+            modo_proceso = modo_35w;
+            if(ms_tiempo != ms_tiempo_ninguno){
+                incremento_temporizador();
+            }
+            while(BUTTON_35W == false && on_off == false){visualizar_display();}
+        }
+    }
+    //Boton para 50w
+    if(BUTTON_50W == false && on_off == false){
+        __delay_ms(20);
+        if(BUTTON_50W == false && on_off == false){
+            ms_state = MS_P50W;
+            modo_proceso = modo_50w;
+            if(ms_tiempo != ms_tiempo_ninguno){
+                decremento_temporizador();
+            }
+            while(BUTTON_50W == false && on_off == false){visualizar_display();}
+        }
+    }
+    if(BUTTON_START_STOP == false ){
+        __delay_ms(20);
+        if(BUTTON_START_STOP == false){
+            
+            if(on_off == false){
+                ms_state = MS_ON;
+            }else{
+                on_off = !on_off;
+            }
+            
+            while(BUTTON_START_STOP == false){visualizar_display();}
+        }
+    }
+}
+void proceso_on(void){
+    if(on_off == true){
+        switch(modo_proceso){
+            case modo_35w:
+                RELAY_35W = true;
+                RELAY_50W = false;
+                actualizar_temporizador();
+                break;
+            case modo_50w:
+                RELAY_35W = false;
+                RELAY_50W = true;
+                actualizar_temporizador();
+                break;
+        }
+    }else{
+        RELAY_50W = false;
+        RELAY_35W = false;
+        
+    }
+}
+
+void actualizar_temporizador(void) {
+    static uint32_t last_second = 0;
+    uint32_t now = millis();
+    
+    if (!temporizador_activo) return;
+    
+    // Actualizar cada 1000ms (1 segundo)
+    if ((now - last_second) >= 1000) {
+        last_second = now;
+             
+        // Decrementar 
+        if (unidades > 0) {
+            unidades--;
+        } else {
+            // Si segundos llegan a 0, decrementar minutos
+            if (decenas > 0) {
+                decenas--;
+                unidades = 9;
+            } else {
+                if(centenas > 0){
+                    centenas --;
+                    decenas = 9;
+                }else{
+                    // Temporizador llegó a cero
+                    temporizador_activo = false;
+                    verificar_fin_temporizador();
+                }
+            }
+        }
+        // Actualizar display
+        convertir_tiempo_a_display();
+    }
+}
+void convertir_tiempo_a_display(void) {
+    // Minutos (dos dígitos)
+    display_buffer[0] = centenas;    // Decenas de minutos
+    display_buffer[1] = decenas;    // Unidades de minutos
+    
+    // Segundos (dos dígitos)
+    display_buffer[2] = unidades;   // Decenas de segundos
+}
+void verificar_fin_temporizador(void) {
+    // Aquí puedes añadir efectos visuales o sonidos cuando el temporizador llega a cero
+    // Por ejemplo, hacer parpadear el display o activar un buzzer
+    PORTC = 0X00;
+    uint32_t last_change = 0;
+    bool mostrar_dos_ms = false;
+    const CARACTER MS_OFF[]={CHAR_O,CHAR_F,CHAR_F};
+    const CARACTER MS_CLEAR[] = {CHAR_CLEAR,CHAR_CLEAR,CHAR_CLEAR};
+    // Ejemplo: parpadeo rápido del display
+    while(on_off == true) {
+        visualizar_display();
+        uint32_t now = millis();
+        if((now - last_change) >= 500){
+            last_change = now;
+            mostrar_dos_ms = !mostrar_dos_ms;
+            mostrar_mensajes((mostrar_dos_ms == true)? MS_OFF:MS_CLEAR, 4);
+        }
+        if(BUTTON_START_STOP == false){
+            __delay_ms(20);
+            if(BUTTON_START_STOP == false){
+                on_off = false;
+                ms_tiempo = ms_tiempo_ninguno;
+                RELAY_35W = false;
+                RELAY_50W = false;
+                temporizador_activo = true;
+                unidades = 0;
+                decenas = 8;
+                centenas = 1;
+                while(BUTTON_START_STOP == false){visualizar_display();}
+            }
+        }
+    }
+}
+void incremento_temporizador(void){
+    unidades ++;
+    if(unidades >= 10){
+        unidades = 0;
+        decenas ++;
+        if(decenas >= 10){
+            decenas = 0;
+            centenas ++;
+            if(centenas >= 10){
+                centenas = 0;
+            }
+        }
+    }
+    // Actualizar display
+    convertir_tiempo_a_display();
+}
+void decremento_temporizador(void){
+    // Decrementar 
+    if (unidades > 0) {
+        unidades--;
+    } else {
+        // Si segundos llegan a 0, decrementar minutos
+        if (decenas > 0) {
+            decenas--;
+            unidades = 9;
+        } else {
+            if(centenas > 0){
+                centenas --;
+                decenas = 9;
+            }else{
+                // Temporizador llegó a cero
+                temporizador_activo = false;
+                verificar_fin_temporizador();
+            }
+        }
+    }
+    // Actualizar display
+    convertir_tiempo_a_display();
 }
 void main(void){
     configurar_hardware();
     configurar_tmr0();
     while(true){
         visualizar_display();
+        diferentes_mensajes();
+        botones();
+        proceso_on();
     }
 }

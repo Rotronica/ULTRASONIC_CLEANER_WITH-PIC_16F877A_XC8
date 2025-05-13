@@ -3,15 +3,39 @@
 [d edition pro ]
 [d chip 16F877A ]
 [d frameptr 0 ]
-"85 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
-[e E1009 . `uc
+"97 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
+[e E1015 . `uc
+ms_tiempo_ninguno 0
+ms_tiempo_35w 1
+ms_tiempo_50w 2
+]
+"102
+[e E1021 . `uc
+modo_35w 0
+modo_50w 1
+]
+"110
+[e E1026 . `uc
+MS_INIT 0
+MS_P35W 1
+MS_P50W 2
+MS_ON 3
+]
+"127
+[e E1033 . `uc
 CHAR_0 0
 CHAR_3 3
 CHAR_5 5
 CHAR_F 15
+CHAR_N 23
 CHAR_O 24
+CHAR_I 18
+CHAR_P 25
 CHAR_CLEAR 39
 CHAR_GUION 36
+CHAR_GSOMB 40
+CHAR_GBAJO 41
+CHAR_BVERTICAL 42
 ]
 "5 C:\Program Files\Microchip\xc8\v2.46\pic\sources\c99\common\awmod.c
 [v ___awmod __awmod `(i  1 e 2 0 ]
@@ -23,25 +47,73 @@ CHAR_GUION 36
 [v ___eecpymem __eecpymem `(v  1 e 1 0 ]
 "39
 [v ___memcpyee __memcpyee `(v  1 e 1 0 ]
-"96 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
+"149 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
 [v _configurar_hardware configurar_hardware `(v  1 e 1 0 ]
-"102
+"160
 [v _configurar_tmr0 configurar_tmr0 `(v  1 e 1 0 ]
-"112
+"170
 [v _INT_TMR0 INT_TMR0 `II(v  1 e 1 0 ]
-"119
+"177
 [v _millis millis `(ul  1 e 4 0 ]
-"126
+"184
 [v _visualizar_display visualizar_display `(v  1 e 1 0 ]
-"142
+"200
+[v _mostrar_mensajes mostrar_mensajes `(v  1 e 1 0 ]
+"205
+[v _diferentes_mensajes diferentes_mensajes `(v  1 e 1 0 ]
+"253
+[v _efecto_titilar efecto_titilar `(v  1 e 1 0 ]
+"271
+[v _botones botones `(v  1 e 1 0 ]
+"310
+[v _proceso_on proceso_on `(v  1 e 1 0 ]
+"331
+[v _actualizar_temporizador actualizar_temporizador `(v  1 e 1 0 ]
+"364
+[v _convertir_tiempo_a_display convertir_tiempo_a_display `(v  1 e 1 0 ]
+"372
+[v _verificar_fin_temporizador verificar_fin_temporizador `(v  1 e 1 0 ]
+"405
+[v _incremento_temporizador incremento_temporizador `(v  1 e 1 0 ]
+"421
+[v _decremento_temporizador decremento_temporizador `(v  1 e 1 0 ]
+"444
 [v _main main `(v  1 e 1 0 ]
 "59 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC16Fxxx_DFP/1.6.156/xc8\pic\include\proc\pic16f877a.h
 [v _TMR0 TMR0 `VEuc  1 e 1 @1 ]
 "166
 [v _PORTA PORTA `VEuc  1 e 1 @5 ]
+"216
+[v _PORTB PORTB `VEuc  1 e 1 @6 ]
+[s S126 . 1 `uc 1 RB0 1 0 :1:0 
+`uc 1 RB1 1 0 :1:1 
+`uc 1 RB2 1 0 :1:2 
+`uc 1 RB3 1 0 :1:3 
+`uc 1 RB4 1 0 :1:4 
+`uc 1 RB5 1 0 :1:5 
+`uc 1 RB6 1 0 :1:6 
+`uc 1 RB7 1 0 :1:7 
+]
+"233
+[u S135 . 1 `S126 1 . 1 0 ]
+[v _PORTBbits PORTBbits `VES135  1 e 1 @6 ]
+"278
+[v _PORTC PORTC `VEuc  1 e 1 @7 ]
+[s S161 . 1 `uc 1 RC0 1 0 :1:0 
+`uc 1 RC1 1 0 :1:1 
+`uc 1 RC2 1 0 :1:2 
+`uc 1 RC3 1 0 :1:3 
+`uc 1 RC4 1 0 :1:4 
+`uc 1 RC5 1 0 :1:5 
+`uc 1 RC6 1 0 :1:6 
+`uc 1 RC7 1 0 :1:7 
+]
+"295
+[u S170 . 1 `S161 1 . 1 0 ]
+[v _PORTCbits PORTCbits `VES170  1 e 1 @7 ]
 "340
 [v _PORTD PORTD `VEuc  1 e 1 @8 ]
-[s S60 . 1 `uc 1 RBIF 1 0 :1:0 
+[s S82 . 1 `uc 1 RBIF 1 0 :1:0 
 `uc 1 INTF 1 0 :1:1 
 `uc 1 TMR0IF 1 0 :1:2 
 `uc 1 RBIE 1 0 :1:3 
@@ -51,14 +123,14 @@ CHAR_GUION 36
 `uc 1 GIE 1 0 :1:7 
 ]
 "477
-[s S69 . 1 `uc 1 . 1 0 :2:0 
+[s S91 . 1 `uc 1 . 1 0 :2:0 
 `uc 1 T0IF 1 0 :1:2 
 `uc 1 . 1 0 :2:3 
 `uc 1 T0IE 1 0 :1:5 
 ]
-[u S74 . 1 `S60 1 . 1 0 `S69 1 . 1 0 ]
-[v _INTCONbits INTCONbits `VES74  1 e 1 @11 ]
-[s S34 . 1 `uc 1 PS 1 0 :3:0 
+[u S96 . 1 `S82 1 . 1 0 `S91 1 . 1 0 ]
+[v _INTCONbits INTCONbits `VES96  1 e 1 @11 ]
+[s S51 . 1 `uc 1 PS 1 0 :3:0 
 `uc 1 PSA 1 0 :1:3 
 `uc 1 T0SE 1 0 :1:4 
 `uc 1 T0CS 1 0 :1:5 
@@ -66,44 +138,165 @@ CHAR_GUION 36
 `uc 1 nRBPU 1 0 :1:7 
 ]
 "1275
-[s S41 . 1 `uc 1 PS0 1 0 :1:0 
+[s S58 . 1 `uc 1 PS0 1 0 :1:0 
 `uc 1 PS1 1 0 :1:1 
 `uc 1 PS2 1 0 :1:2 
 ]
-[u S45 . 1 `S34 1 . 1 0 `S41 1 . 1 0 ]
-[v _OPTION_REGbits OPTION_REGbits `VES45  1 e 1 @129 ]
+[u S62 . 1 `S51 1 . 1 0 `S58 1 . 1 0 ]
+[v _OPTION_REGbits OPTION_REGbits `VES62  1 e 1 @129 ]
 "1325
 [v _TRISA TRISA `VEuc  1 e 1 @133 ]
+"1375
+[v _TRISB TRISB `VEuc  1 e 1 @134 ]
+"1437
+[v _TRISC TRISC `VEuc  1 e 1 @135 ]
 "1499
 [v _TRISD TRISD `VEuc  1 e 1 @136 ]
-"25 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
+"32 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
 [v _milisegundos milisegundos `ul  1 e 4 0 ]
-"26
+"33
 [v _display_state display_state `uc  1 e 1 0 ]
-"28
-[v _DATOS DATOS `DC[40]uc  1 s 40 DATOS ]
-"85
-[v _display_buffer display_buffer `[3]E1009  1 e 3 0 ]
-"142
+"34
+[v _on_off on_off `a  1 e 1 0 ]
+"35
+[v _temporizador_activo temporizador_activo `a  1 s 1 temporizador_activo ]
+"36
+[v _cont cont `uc  1 s 1 cont ]
+"37
+[v _unidades unidades `uc  1 s 1 unidades ]
+"38
+[v _decenas decenas `uc  1 s 1 decenas ]
+"39
+[v _centenas centenas `uc  1 s 1 centenas ]
+"41
+[v _DATOS DATOS `DC[43]uc  1 s 43 DATOS ]
+"97
+[v _ms_tiempo ms_tiempo `E1015  1 e 1 0 ]
+"102
+[v _modo_proceso modo_proceso `E1021  1 e 1 0 ]
+"110
+[v _ms_state ms_state `E1026  1 e 1 0 ]
+"127
+[v _display_buffer display_buffer `[3]E1033  1 e 3 0 ]
+"444
 [v _main main `(v  1 e 1 0 ]
 {
-"148
+"453
 } 0
-"126
+"310
+[v _proceso_on proceso_on `(v  1 e 1 0 ]
+{
+"329
+} 0
+"331
+[v _actualizar_temporizador actualizar_temporizador `(v  1 e 1 0 ]
+{
+"333
+[v actualizar_temporizador@now now `ul  1 a 4 26 ]
+"332
+[v actualizar_temporizador@last_second last_second `ul  1 s 4 last_second ]
+"363
+} 0
+"205
+[v _diferentes_mensajes diferentes_mensajes `(v  1 e 1 0 ]
+{
+"215
+[v diferentes_mensajes@now now `ul  1 a 4 18 ]
+"206
+[v diferentes_mensajes@sec1 sec1 `DC[3]E1033  1 s 3 sec1 ]
+"207
+[v diferentes_mensajes@sec2 sec2 `DC[3]E1033  1 s 3 sec2 ]
+"208
+[v diferentes_mensajes@sec3 sec3 `DC[3]E1033  1 s 3 sec3 ]
+"209
+[v diferentes_mensajes@sec4 sec4 `DC[3]E1033  1 s 3 sec4 ]
+"211
+[v diferentes_mensajes@ms_para_35w ms_para_35w `DC[3]E1033  1 s 3 ms_para_35w ]
+"212
+[v diferentes_mensajes@ms_para_50w ms_para_50w `DC[3]E1033  1 s 3 ms_para_50w ]
+"213
+[v diferentes_mensajes@ms_inicio_proceso ms_inicio_proceso `DC[3]E1033  1 s 3 ms_inicio_proceso ]
+"216
+[v diferentes_mensajes@last_change last_change `ul  1 s 4 last_change ]
+"217
+[v diferentes_mensajes@mostrar_ms mostrar_ms `uc  1 s 1 mostrar_ms ]
+"252
+} 0
+"253
+[v _efecto_titilar efecto_titilar `(v  1 e 1 0 ]
+{
+[v efecto_titilar@mensaje mensaje `*.24DCE1033  1 a 1 wreg ]
+"257
+[v efecto_titilar@now now `ul  1 a 4 9 ]
+"253
+[v efecto_titilar@mensaje mensaje `*.24DCE1033  1 a 1 wreg ]
+[v efecto_titilar@longitud longitud `uc  1 p 1 0 ]
+[v efecto_titilar@tiempo tiempo `ul  1 p 4 1 ]
+"254
+[v efecto_titilar@last_change last_change `ul  1 s 4 last_change ]
+"255
+[v efecto_titilar@mostrar mostrar `a  1 s 1 mostrar ]
+"265
+[v efecto_titilar@apagado apagado `DC[3]E1033  1 s 3 apagado ]
+"257
+[v efecto_titilar@mensaje mensaje `*.24DCE1033  1 a 1 13 ]
+"269
+} 0
+"160
+[v _configurar_tmr0 configurar_tmr0 `(v  1 e 1 0 ]
+{
+"169
+} 0
+"149
+[v _configurar_hardware configurar_hardware `(v  1 e 1 0 ]
+{
+"159
+} 0
+"271
+[v _botones botones `(v  1 e 1 0 ]
+{
+"309
+} 0
+"405
+[v _incremento_temporizador incremento_temporizador `(v  1 e 1 0 ]
+{
+"420
+} 0
+"421
+[v _decremento_temporizador decremento_temporizador `(v  1 e 1 0 ]
+{
+"443
+} 0
+"372
+[v _verificar_fin_temporizador verificar_fin_temporizador `(v  1 e 1 0 ]
+{
+"383
+[v verificar_fin_temporizador@now now `ul  1 a 4 17 ]
+"376
+[v verificar_fin_temporizador@last_change last_change `ul  1 a 4 12 ]
+"377
+[v verificar_fin_temporizador@mostrar_dos_ms mostrar_dos_ms `a  1 a 1 21 ]
+"378
+[v verificar_fin_temporizador@MS_OFF MS_OFF `DC[3]E1033  1 s 3 MS_OFF ]
+"379
+[v verificar_fin_temporizador@MS_CLEAR MS_CLEAR `DC[3]E1033  1 s 3 MS_CLEAR ]
+"404
+} 0
+"184
 [v _visualizar_display visualizar_display `(v  1 e 1 0 ]
 {
-"128
-[v visualizar_display@now now `ul  1 a 4 8 ]
-"127
+"186
+[v visualizar_display@now now `ul  1 a 4 4 ]
+"185
 [v visualizar_display@last_mux last_mux `ul  1 s 4 last_mux ]
-"141
+"199
 } 0
-"119
+"177
 [v _millis millis `(ul  1 e 4 0 ]
 {
-"120
-[v millis@m m `ul  1 a 4 0 ]
-"125
+"178
+[v millis@m m `ul  1 a 4 6 ]
+"183
 } 0
 "5 C:\Program Files\Microchip\xc8\v2.46\pic\sources\c99\common\awmod.c
 [v ___awmod __awmod `(i  1 e 2 0 ]
@@ -116,18 +309,25 @@ CHAR_GUION 36
 [v ___awmod@dividend dividend `i  1 p 2 4 ]
 "34
 } 0
-"102 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
-[v _configurar_tmr0 configurar_tmr0 `(v  1 e 1 0 ]
+"200 E:\AUXILIAR\MICRO\MPLABX EN C\LIMPIADOR_16F877A.X\Codigo_fuente.c
+[v _mostrar_mensajes mostrar_mensajes `(v  1 e 1 0 ]
 {
-"111
+[v mostrar_mensajes@mensaje mensaje `*.24DCE1033  1 a 1 wreg ]
+"201
+[v mostrar_mensajes@i i `uc  1 a 1 8 ]
+"200
+[v mostrar_mensajes@mensaje mensaje `*.24DCE1033  1 a 1 wreg ]
+[v mostrar_mensajes@longitud longitud `uc  1 p 1 2 ]
+[v mostrar_mensajes@mensaje mensaje `*.24DCE1033  1 a 1 7 ]
+"204
 } 0
-"96
-[v _configurar_hardware configurar_hardware `(v  1 e 1 0 ]
+"364
+[v _convertir_tiempo_a_display convertir_tiempo_a_display `(v  1 e 1 0 ]
 {
-"101
+"371
 } 0
-"112
+"170
 [v _INT_TMR0 INT_TMR0 `II(v  1 e 1 0 ]
 {
-"118
+"176
 } 0

@@ -1,4 +1,4 @@
-# 1 "Codigo_fuente.c"
+# 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\sources\\c99\\pic\\__eeprom.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,8 +6,7 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "Codigo_fuente.c" 2
-# 14 "Codigo_fuente.c"
+# 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\sources\\c99\\pic\\__eeprom.c" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -1898,154 +1897,176 @@ extern __bank0 unsigned char __resetbits;
 extern __bank0 __bit __powerdown;
 extern __bank0 __bit __timeout;
 # 28 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\include\\xc.h" 2 3
-# 14 "Codigo_fuente.c" 2
-
-
-# 1 "./fusibles.h" 1
-
-
-
-#pragma config FOSC = XT
-#pragma config WDTE = OFF
-#pragma config PWRTE = OFF
-#pragma config BOREN = OFF
-#pragma config LVP = OFF
-#pragma config CPD = OFF
-#pragma config WRT = OFF
-#pragma config CP = OFF
-# 16 "Codigo_fuente.c" 2
-
-# 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\include\\c99\\stdbool.h" 1 3
-# 17 "Codigo_fuente.c" 2
+# 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\sources\\c99\\pic\\__eeprom.c" 2
 
 
 
 
+void
+__eecpymem(volatile unsigned char *to, __eeprom unsigned char * from, unsigned char size)
+{
+ volatile unsigned char *cp = to;
 
+ while (EECON1bits.WR) continue;
+ EEADR = (unsigned char)from;
+ while(size--) {
+  while (EECON1bits.WR) continue;
 
+  EECON1 &= 0x7F;
 
-
-uint32_t milisegundos = 0;
-uint8_t display_state = 0;
-
-static const uint8_t DATOS[] = {
-
-    0xC0,
-    0xF9,
-    0xA4,
-    0xB0,
-    0x99,
-    0x92,
-    0x82,
-    0xF8,
-    0x80,
-    0x90,
-
-
-    0x88,
-    0x83,
-    0xC6,
-    0xA1,
-    0x86,
-    0x8E,
-    0xC2,
-    0x89,
-    0xCF,
-    0xE1,
-    0x89,
-    0xC7,
-    0xC8,
-    0xAB,
-    0xC0,
-    0x8C,
-    0x98,
-    0xAF,
-    0x92,
-    0x87,
-    0xC1,
-    0xC1,
-    0xD5,
-    0x89,
-    0x91,
-    0xA4,
-
-
-    0xBF,
-    0x7F,
-    0x9C,
-    0xFF
-};
-typedef enum{
-    CHAR_0 = 0,
-    CHAR_3 = 3,
-    CHAR_5 = 5,
-    CHAR_F = 15,
-    CHAR_O = 24,
-    CHAR_CLEAR = 39,
-    CHAR_GUION = 36
-}CARACTER;
-
-CARACTER display_buffer[3] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
-
-
-
-
-
-void configurar_hardware(void);
-void configurar_tmr0(void);
-uint32_t millis(void);
-
-void visualizar_display(void);
-void configurar_hardware(void){
-    TRISA = 0x00;
-    TRISD = 0x00;
-    PORTA = 0x00;
-    PORTD = 0x00;
+  EECON1bits.RD = 1;
+  *cp++ = EEDATA;
+  ++EEADR;
+ }
+# 36 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\sources\\c99\\pic\\__eeprom.c"
 }
-void configurar_tmr0(void){
 
-    OPTION_REGbits.PS = 0b010;
-    OPTION_REGbits.PSA = 0;
-    OPTION_REGbits.T0CS = 0;
+void
+__memcpyee(__eeprom unsigned char * to, const unsigned char *from, unsigned char size)
+{
+ const unsigned char *ptr =from;
 
-    INTCONbits.GIE = 1;
-    INTCONbits.T0IE = 1;
-    TMR0 = 131;
+ while (EECON1bits.WR) continue;
+ EEADR = (unsigned char)to - 1U;
+
+ EECON1 &= 0x7F;
+
+ while(size--) {
+  while (EECON1bits.WR) {
+   continue;
+  }
+  EEDATA = *ptr++;
+  ++EEADR;
+  STATUSbits.CARRY = 0;
+  if (INTCONbits.GIE) {
+   STATUSbits.CARRY = 1;
+  }
+  INTCONbits.GIE = 0;
+  EECON1bits.WREN = 1;
+  EECON2 = 0x55;
+  EECON2 = 0xAA;
+  EECON1bits.WR = 1;
+  EECON1bits.WREN = 0;
+  if (STATUSbits.CARRY) {
+   INTCONbits.GIE = 1;
+  }
+ }
+# 101 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\sources\\c99\\pic\\__eeprom.c"
 }
-void __attribute__((picinterrupt(("")))) INT_TMR0(void){
-    if(INTCONbits.T0IF == 1){
-        INTCONbits.T0IF = 0;
-        TMR0 = 131;
-        milisegundos++;
-    }
+
+unsigned char
+__eetoc(__eeprom void *addr)
+{
+ unsigned char data;
+ __eecpymem((unsigned char *) &data,addr,1);
+ return data;
 }
-uint32_t millis(void){
-    uint32_t m;
-    INTCONbits.GIE = 0;
-    m = milisegundos;
-    INTCONbits.GIE = 1;
-    return m;
+
+unsigned int
+__eetoi(__eeprom void *addr)
+{
+ unsigned int data;
+ __eecpymem((unsigned char *) &data,addr,2);
+ return data;
 }
-void visualizar_display(void){
-    static uint32_t last_mux = 0;
-    uint32_t now = millis();
 
-    if((now - last_mux) >= 5){
-        last_mux = now;
-
-        PORTA &= ~0x0F;
-
-        PORTD = DATOS[display_buffer[display_state]];
-
-        PORTA |= ~(1 << display_state);
-
-        display_state = (display_state + 1) % 3;
-    }
+#pragma warning push
+#pragma warning disable 2040
+__uint24
+__eetom(__eeprom void *addr)
+{
+ __uint24 data;
+ __eecpymem((unsigned char *) &data,addr,3);
+ return data;
 }
-void main(void){
-    configurar_hardware();
-    configurar_tmr0();
-    while(1){
-        visualizar_display();
-    }
+#pragma warning pop
+
+unsigned long
+__eetol(__eeprom void *addr)
+{
+ unsigned long data;
+ __eecpymem((unsigned char *) &data,addr,4);
+ return data;
+}
+
+#pragma warning push
+#pragma warning disable 1516
+unsigned long long
+__eetoo(__eeprom void *addr)
+{
+ unsigned long long data;
+ __eecpymem((unsigned char *) &data,addr,8);
+ return data;
+}
+#pragma warning pop
+
+unsigned char
+__ctoee(__eeprom void *addr, unsigned char data)
+{
+ __memcpyee(addr,(unsigned char *) &data,1);
+ return data;
+}
+
+unsigned int
+__itoee(__eeprom void *addr, unsigned int data)
+{
+ __memcpyee(addr,(unsigned char *) &data,2);
+ return data;
+}
+
+#pragma warning push
+#pragma warning disable 2040
+__uint24
+__mtoee(__eeprom void *addr, __uint24 data)
+{
+ __memcpyee(addr,(unsigned char *) &data,3);
+ return data;
+}
+#pragma warning pop
+
+unsigned long
+__ltoee(__eeprom void *addr, unsigned long data)
+{
+ __memcpyee(addr,(unsigned char *) &data,4);
+ return data;
+}
+
+#pragma warning push
+#pragma warning disable 1516
+unsigned long long
+__otoee(__eeprom void *addr, unsigned long long data)
+{
+ __memcpyee(addr,(unsigned char *) &data,8);
+ return data;
+}
+#pragma warning pop
+
+float
+__eetoft(__eeprom void *addr)
+{
+ float data;
+ __eecpymem((unsigned char *) &data,addr,3);
+ return data;
+}
+
+double
+__eetofl(__eeprom void *addr)
+{
+ double data;
+ __eecpymem((unsigned char *) &data,addr,4);
+ return data;
+}
+
+float
+__fttoee(__eeprom void *addr, float data)
+{
+ __memcpyee(addr,(unsigned char *) &data,3);
+ return data;
+}
+
+double
+__fltoee(__eeprom void *addr, double data)
+{
+ __memcpyee(addr,(unsigned char *) &data,4);
+ return data;
 }

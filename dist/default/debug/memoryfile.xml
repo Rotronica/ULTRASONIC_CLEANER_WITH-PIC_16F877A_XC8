@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <executable name="dist/default/production\LIMPIADOR_16F877A.X.production.hex">
+  <executable name="dist/default/debug\LIMPIADOR_16F877A.X.debug.hex">
     <memory name="program">
       <units>words</units>
       <length>8192</length>
-      <used>399</used>
-      <free>7793</free>
+      <used>385</used>
+      <free>7807</free>
     </memory>
     <memory name="data">
       <units>bytes</units>

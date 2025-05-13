@@ -1,6 +1,6 @@
 Version 4.0 HI-TECH Software Intermediate Code
 "85 Codigo_fuente.c
-[; ;Codigo_fuente.c: 85: CARACTER display_buffer[3] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
+[; ;Codigo_fuente.c: 85: CARACTER display_buffer[3] = {CHAR_0,CHAR_0,CHAR_0};
 [c E1009 0 3 5 15 24 39 36 .. ]
 [n E1009 . CHAR_0 CHAR_3 CHAR_5 CHAR_F CHAR_O CHAR_CLEAR CHAR_GUION  ]
 "1325 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC16Fxxx_DFP/1.6.156/xc8\pic\include\proc\pic16f877a.h
@@ -307,13 +307,13 @@ Version 4.0 HI-TECH Software Intermediate Code
 ..
 ]
 "85
-[; ;Codigo_fuente.c: 85: CARACTER display_buffer[3] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
+[; ;Codigo_fuente.c: 85: CARACTER display_buffer[3] = {CHAR_0,CHAR_0,CHAR_0};
 [v _display_buffer `E1009 ~T0 @X0 -> 3 `i e ]
 [i _display_buffer
 :U ..
-. `E1009 6
-. `E1009 6
-. `E1009 6
+. `E1009 0
+. `E1009 0
+. `E1009 0
 ..
 ]
 "96
@@ -329,11 +329,11 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;Codigo_fuente.c: 98:     TRISD = 0x00;
 [e = _TRISD -> -> 0 `i `uc ]
 "99
-[; ;Codigo_fuente.c: 99:     PORTA = 0x00;
-[e = _PORTA -> -> 0 `i `uc ]
+[; ;Codigo_fuente.c: 99:     PORTA = 0x0F;
+[e = _PORTA -> -> 15 `i `uc ]
 "100
-[; ;Codigo_fuente.c: 100:     PORTD = 0x00;
-[e = _PORTD -> -> 0 `i `uc ]
+[; ;Codigo_fuente.c: 100:     PORTD = 0xFF;
+[e = _PORTD -> -> 255 `i `uc ]
 "101
 [; ;Codigo_fuente.c: 101: }
 [e :UE 99 ]
@@ -437,21 +437,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v _now `ul ~T0 @X0 1 a ]
 [e = _now ( _millis ..  ]
 "130
-[; ;Codigo_fuente.c: 130:     if((now - last_mux) >= 5){
-[e $ ! >= - _now F1029 -> -> -> 5 `i `l `ul 105  ]
+[; ;Codigo_fuente.c: 130:     if((now - last_mux) >= 500){
+[e $ ! >= - _now F1029 -> -> -> 500 `i `l `ul 105  ]
 {
 "131
 [; ;Codigo_fuente.c: 131:         last_mux = now;
 [e = F1029 _now ]
 "133
-[; ;Codigo_fuente.c: 133:         PORTA &= ~0x0F;
-[e =& _PORTA -> ~ -> 15 `i `Vuc ]
+[; ;Codigo_fuente.c: 133:         PORTA &= ~0xF8;
+[e =& _PORTA -> ~ -> 248 `i `Vuc ]
 "135
 [; ;Codigo_fuente.c: 135:         PORTD = DATOS[display_buffer[display_state]];
 [e = _PORTD *U + &U _DATOS * -> *U + &U _display_buffer * -> _display_state `ux -> -> # *U &U _display_buffer `ui `ux `ux -> -> # *U &U _DATOS `ui `ux ]
 "137
-[; ;Codigo_fuente.c: 137:         PORTA |= ~(1 << display_state);
-[e =| _PORTA -> ~ << -> 1 `i -> _display_state `i `Vuc ]
+[; ;Codigo_fuente.c: 137:         PORTA |= 1 << display_state;
+[e =| _PORTA -> << -> 1 `i -> _display_state `i `Vuc ]
 "139
 [; ;Codigo_fuente.c: 139:         display_state = (display_state + 1) % 3;
 [e = _display_state -> % + -> _display_state `i -> 1 `i -> 3 `i `uc ]
@@ -480,16 +480,16 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;Codigo_fuente.c: 145:     while(1){
 [e :U 108 ]
 {
-"146
-[; ;Codigo_fuente.c: 146:         visualizar_display();
-[e ( _visualizar_display ..  ]
 "147
-[; ;Codigo_fuente.c: 147:     }
+[; ;Codigo_fuente.c: 147:         visualizar_display();
+[e ( _visualizar_display ..  ]
+"148
+[; ;Codigo_fuente.c: 148:     }
 }
 [e :U 107 ]
 [e $U 108  ]
 [e :U 109 ]
-"148
-[; ;Codigo_fuente.c: 148: }
+"149
+[; ;Codigo_fuente.c: 149: }
 [e :UE 106 ]
 }

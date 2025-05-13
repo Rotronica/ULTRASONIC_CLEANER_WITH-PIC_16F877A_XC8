@@ -1985,7 +1985,7 @@ typedef enum{
     CHAR_GUION = 36
 }CARACTER;
 
-CARACTER display_buffer[3] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
+CARACTER display_buffer[3] = {CHAR_0,CHAR_0,CHAR_0};
 
 
 
@@ -1999,8 +1999,8 @@ void visualizar_display(void);
 void configurar_hardware(void){
     TRISA = 0x00;
     TRISD = 0x00;
-    PORTA = 0x00;
-    PORTD = 0x00;
+    PORTA = 0x0F;
+    PORTD = 0xFF;
 }
 void configurar_tmr0(void){
 
@@ -2030,14 +2030,14 @@ void visualizar_display(void){
     static uint32_t last_mux = 0;
     uint32_t now = millis();
 
-    if((now - last_mux) >= 5){
+    if((now - last_mux) >= 500){
         last_mux = now;
 
-        PORTA &= ~0x0F;
+        PORTA &= ~0xF8;
 
         PORTD = DATOS[display_buffer[display_state]];
 
-        PORTA |= ~(1 << display_state);
+        PORTA |= 1 << display_state;
 
         display_state = (display_state + 1) % 3;
     }
@@ -2046,6 +2046,7 @@ void main(void){
     configurar_hardware();
     configurar_tmr0();
     while(1){
+
         visualizar_display();
     }
 }

@@ -3,6 +3,10 @@
  * Author: Rodrigo C.C
  *
  * Created on May 3, 2025, 1:07 PM
+ * El siguiente program realiza el control de una limpiadora ultrasonica
+ * este limpiador contien un tres botones el cual dos botones controla las potencias
+ * y el ajuste del tiempo 
+ * 
  */
 
 
@@ -11,325 +15,134 @@
 #include <pic16f877a.h>
 #include "fusibles.h"
 #include <stdbool.h>
-#define Frec_visualizacion  5           //Frecuencia de visualizacion para la multiplexacion 200Hz
-#define VER_NUMEROS 0                   //Opcion a escoger ver numeros 
-#define VER_ESPERA  1                   //Opcion a escoger ver espera
-#define BUTTON_ON_OFF   PORTBbits.RB0   //Boton on-off
-#define BUTTON_35W      PORTBbits.RB1   //Boton para 35w y para disminuir el tiempo 
-#define BUTTON_50W      PORTBbits.RB2   //Boton para 50w y para aumentar el tiempo
-#define ACTIVA_35W      PORTEbits.RE0
-#define ACTIVA_50W      PORTEbits.RE1
-#define PORT_VISUALIZAR PORTD           //Puerto en el cual se conectaran los display
 
-#define TIEMPO 1000     //1Seg          //Tiempo del reloj a temporizar(Cuando decrementa)
-#define TIEMPO_MENS_OFF 1000            //Tiempo de visualizacion del mensaje 'OFF'
-#define TIEMPO_MENS_35W 1000            //Tiempo de visualizacion del mensaje para una seleccion de 35w
-#define TIEMPO_MENS_50W 1000            //Tiempo de visualizacion del mensaje para una seleccion de 50w
-int unid = 0, dece = 0, cent = 0, cont = 0;//Variables globales para almacenar las unidades, decenas, centenas y constate
-static bool state = 0;                  //Variable estado para el pulsador BUTON_ON_OF
-volatile uint32_t milisegundos = 0;  // Contador variable global de ms
-uint32_t anterior = 0;
-uint32_t mens_off = 0;
-uint32_t anterior_50w = 0;
-uint32_t mens_anterior_50w = 0;
-uint32_t anterior_35w = 0;
-uint32_t mens_anterior_35w = 0;
+#define MUX_TIME            5       //Tiempo de multiplexado
+#define PINES_MUX           PORTA   //Pines que activaran los display
+#define DISPLAY_MASK        0x0F    // Bits 0-3 para displays(Para la mascara de seguridad)
+#define PORT_VISUALIZADOR   PORTD   //Puerto por donde se visualizara los displays
+#define NUM_DISPLAY         3       //Cantidad de display utilizados 
 
-//Array de datos que contienen los numeros del 0-9
-static const uint8_t display[10] = {0xC0,   //0
-                                    0xf9,   //1
-                                    0xA4,   //2
-                                    0xB0,   //3
-                                    0x99,   //4
-                                    0x92,   //5
-                                    0x82,   //6
-                                    0xF8,   //7
-                                    0x80,   //8
-                                    0x90};  //9
-//Array de datos que contiene el mensaje 'on' y 'off'
-static const uint8_t mensaje_on[3] = {0xA3, //O -->0
-                                      0xAB, //N -->1
-                                      0x8E};//f -->1        10001110
-//Prototipo de funciones
-void config_registros(void);        //Configura los registros de PORT, TRIS, y el TMR0
-void visualizar(uint8_t VER, uint8_t unidad, uint8_t decena, uint8_t centena);//Se encarga de la visualizacion de display
-void incremento_time(void); //Incrementa el tiempo 
-void decremento_time(void); //Decrementa el tiempo
-void mensajes(void);        //Se encarga de visualizar los diferentes mensajes
-//estructura de datos enumerados para activar los display
+uint32_t milisegundos = 0;
+uint8_t display_state = 0;  //Estado de cada pin que activa cada display
+// Tabla de caracteres (ánodo común)
+static const uint8_t DATOS[] = {
+    // Números 0-9 (invertidos)
+    0xC0, // 0 (0x3F invertido)
+    0xF9, // 1 (0x06 invertido)
+    0xA4, // 2 (0x5B invertido)
+    0xB0, // 3 (0x4F invertido)
+    0x99, // 4 (0x66 invertido)
+    0x92, // 5 (0x6D invertido)
+    0x82, // 6 (0x7D invertido)
+    0xF8, // 7 (0x07 invertido)
+    0x80, // 8 (0x7F invertido)
+    0x90, // 9 (0x6F invertido)
+    
+    // Letras A-Z (invertidas)
+    0x88, // A (0x77 invertido)
+    0x83, // b (0x7C invertido)
+    0xC6, // C (0x39 invertido)
+    0xA1, // d (0x5E invertido)
+    0x86, // E (0x79 invertido)
+    0x8E, // F (0x71 invertido)
+    0xC2, // G (0x3D invertido)
+    0x89, // H (0x76 invertido)
+    0xCF, // I (0x30 invertido)
+    0xE1, // J (0x1E invertido)
+    0x89, // K (igual a H)
+    0xC7, // L (0x38 invertido)
+    0xC8, // M (0x37 invertido)
+    0xAB, // n (0x54 invertido)
+    0xC0, // O (0x3F invertido)
+    0x8C, // P (0x73 invertido)
+    0x98, // q (0x67 invertido)
+    0xAF, // r (0x50 invertido)
+    0x92, // S (igual a 5)
+    0x87, // t (0x78 invertido)
+    0xC1, // U (0x3E invertido)
+    0xC1, // V (igual a U)
+    0xD5, // W (0x2A invertido)
+    0x89, // X (igual a H)
+    0x91, // Y (0x6E invertido)
+    0xA4, // Z (igual a 2)
+    
+    // Símbolos especiales (invertidos)
+    0xBF, // Guión (-) (0x40 invertido)
+    0x7F, // Punto decimal (.) (0x80 invertido)
+    0x9C, // Grados (°) (0x63 invertido)
+    0xFF  // Espacio (apagado) (0x00 invertido)
+};
 typedef enum{
-    off = 0,        //0 El display esta desactiva
-    on_unidad,      //1 El display unidad esta activado
-    on_decena,      //2 El display decena esta activado
-    on_centena      //3 El display centena esta activado
-}Activar_displays;  //Nombre de la estructura
-//Estructura de datos enumerados para las opciones escogidas
-typedef enum{
-    ninguno = 0,    //0 No se a seleccionado ninguna opcion
-    opcion_35w,     //1 Se a seleccionado la opcion para 35w
-    opcion_50w      //2 Se a seleccionado la opcion para 50w
-}opcion;            //Nombre de la estructura
-//Estructura de datos enumerados para activar los mensajes
-typedef enum{
-    mensaje_espera = 0, //0 Es para escoger el mensaje de espera
-    mensaje_35w,        //1 Es para escoger el mensaje de seleccion 35w
-    mensaje_50w         //2 Es para escoger el mensaje de seleccion de 50w
-}mensaje;               //Nombre de la estructura
-//Inicializacion de los diferentes tipos de estructuras y datos
-Activar_displays on_display = off;          //La variable on_display esta en off
-mensaje mensaje_display = mensaje_espera;   //La variable mensaje_display esta en mensaje_espera
-opcion seleccion = ninguno;                 //La variable seleccion esta en ninguno
-//Funcion de interrupcion del TMR0
-void __interrupt() INT_TMR0(void){
-    if(INTCONbits.T0IF == 1){       //Verifica si la bandera de interrupcio por desbordamiento del TMR0 esta activado
-        INTCONbits.T0IF = 0;        //Limpia la bander de interrupion del TMR0
-        //Carga al TMR0 para 1ms
-        TMR0 = 131;
-        milisegundos ++;            //Incremenata la variable 
-    }
-}
-void main(void) {
-    config_registros();
-    while(1){
-        //Boton para Potencia de 35w y decremento del tiempo
-        if(BUTTON_35W == 0 && state == false){
-            __delay_ms(20);
-            if(BUTTON_35W == 0 && state == false){
-                cont--;
-                if(seleccion == ninguno){
-                    unid = 0;
-                    dece = 2;
-                    cent = 1;
-                }
-                if(seleccion != opcion_50w){    //Bloquea al boton de 50w para 
-                    seleccion = opcion_35w;
-                    mensaje_display = mensaje_35w;
-                }
-                
-                while(BUTTON_35W == 0 && state == false){visualizar(VER_NUMEROS,on_unidad,on_decena,on_centena);}
-            }
-        }
-        //Boton para potencia de 50w y incremento del tiempo
-        if(BUTTON_50W == 0 && state == false){
-            __delay_ms(20);
-            if(BUTTON_50W == 0 && state == false){
-                cont++;
-                if(seleccion == ninguno){
-                    unid = 0;
-                    dece = 4;
-                    cent = 1;
-                }
-                if(seleccion != opcion_35w){    //Bloquea al boton de 35w
-                    seleccion = opcion_50w;
-                    mensaje_display = mensaje_50w; 
-                }
-                while(BUTTON_50W == 0 && state == false){visualizar(VER_NUMEROS,on_unidad,on_decena,on_centena);}
-            }
-        }
-        //Boton para iniciar el proceso
-        if(BUTTON_ON_OFF == 0){
-            __delay_ms(20);
-            if(BUTTON_ON_OFF == 0){
-                state = !state;
-                while(BUTTON_ON_OFF == 0){visualizar(VER_NUMEROS,on_unidad,on_decena,on_centena);}
-            }
-        }
-        //mensajes
-        if(state == true && mensaje_display != mensaje_espera){
-            mensajes();
-        }
-        //Activa rele para 35w
-        if(state == true && seleccion == opcion_35w){
-            ACTIVA_35W = true;
-        }
-        //Activa rele para 50w
-        if(state == true && seleccion == opcion_50w){
-            ACTIVA_50W = true;
-        }
-        //Si el boton esta en off
-        if(state == false){
-            ACTIVA_35W = 0;
-            ACTIVA_50W = 0;
-        }
-        //Empieza el decremento de la variable cont cuando state = 1
-        if(state == true){
-            if(milisegundos - anterior >= TIEMPO) {
-                anterior = milisegundos;
-                cont--;
-                decremento_time();
-            }
-        }
-        //Con la variable cont que se decrementa a qui ingresa a una funcion que decrementa el tiempo
-        if(state == false || seleccion == opcion_35w){//<--------------
-            decremento_time();
-        }
-        if(state == false || seleccion == opcion_50w){//<------------
-            incremento_time();
-        }
-        //Mensaje 'OFF' cuando halla acabado la temporizacion
-        if(unid == 0 && dece == 0 && cent == 0){
-            ACTIVA_35W = 0;
-            ACTIVA_50W = 0;
-            seleccion = ninguno;
-            mensajes();
-        }else{
-            visualizar(VER_NUMEROS,on_unidad,on_decena,on_centena);//Visualiza los numeros cuando se a seleccionado una opcion
-        }
-    }
-}
-void config_registros(void){
+    CHAR_0 = 0,
+    CHAR_3 = 3,
+    CHAR_5 = 5,
+    CHAR_F = 15,
+    CHAR_O = 24,
+    CHAR_CLEAR = 39,
+    CHAR_GUION = 36
+}CARACTER;
+
+CARACTER display_buffer[NUM_DISPLAY] = {CHAR_GUION,CHAR_GUION,CHAR_GUION};
+
+/* ============================================
+ *      Prototipo de funcion
+ * ============================================
+ */
+void configurar_hardware(void);
+void configurar_tmr0(void);
+uint32_t millis(void);
+//void __interrupt() INT_TMR0(void);
+void visualizar_display(void);
+void configurar_hardware(void){
     TRISA = 0x00;
+    TRISD = 0x00;
     PORTA = 0x00;
-    TRISE = 0x00;
-    PORTE = 0x00;
-    TRISB = 0xFF;
-    PORTB = 0X00;
-    TRISD = 0X00;
-    PORTD = 0X00;
-    OPTION_REGbits.nRBPU = 0;
-    //Configuracion del TMR0
-    OPTION_REGbits.PS = 0b010;
-    OPTION_REGbits.PSA = 0;
-    OPTION_REGbits.T0CS = 0;
+    PORTD = 0x00;
+}
+void configurar_tmr0(void){
+    //Configurarndo el TMR0
+    OPTION_REGbits.PS = 0b010; //Conu un prescaler 1:8
+    OPTION_REGbits.PSA = 0;     //Asignado al TMR0
+    OPTION_REGbits.T0CS = 0;    //Modo temporizador
+    //Configurar Interrupcion TMR0
     INTCONbits.GIE = 1;
     INTCONbits.T0IE = 1;
-    //Carga al TMR0 para 1ms
-    TMR0 = 131;
+    TMR0 = 131; //Carga al TMR0 para una temporizacion de 1ms
 }
-void visualizar(uint8_t VER, uint8_t unidad, uint8_t decena, uint8_t centena){
-    //Unidad
-    if(on_unidad == unidad){
-        PORTA = 0XFF;     // Primero apagar todos los displays para evitar ghosting
-        switch(VER){
-            case VER_NUMEROS:
-                PORT_VISUALIZAR = display[unid];
-                break;
-            case VER_ESPERA:
-                PORT_VISUALIZAR = mensaje_on[unid];
-                break;
-        }
-        PORTA = (unsigned char)(~(1<<0));   //Esto le dice al compilador: 
-                                            //"Sé lo que estoy haciendo, convierte 
-                                            //esto a unsigned char explícitamente".
-    }
-    __delay_ms(Frec_visualizacion);
-    //Decena
-    if(on_decena == decena){
-        PORTA = 0XFF;     // Primero apagar todos los displays para evitar ghosting
-        switch(VER){
-        case VER_NUMEROS:
-            PORT_VISUALIZAR = display[dece];
-            break;
-        case VER_ESPERA:
-            PORT_VISUALIZAR = mensaje_on[dece];
-            break;
-        }
-        PORTA = (unsigned char)(~(1<<1));   //Esto le dice al compilador: 
-                                            //"Sé lo que estoy haciendo, convierte 
-                                            //esto a unsigned char explícitamente".
-    }
-    __delay_ms(Frec_visualizacion);
-    //Centena
-    if(on_centena == centena){
-        PORTA = 0XFF;     // Primero apagar todos los displays para evitar ghosting
-        switch(VER){
-            case VER_NUMEROS:
-                PORT_VISUALIZAR = display[cent];
-                break;
-            case VER_ESPERA:
-                PORT_VISUALIZAR = mensaje_on[cent];
-                break;
-        }
-        PORTA = (unsigned char)(~(1<<2));   //Esto le dice al compilador: 
-                                            //"Sé lo que estoy haciendo, convierte 
-                                            //esto a unsigned char explícitamente".
-    }
-    __delay_ms(Frec_visualizacion);
-}
-void incremento_time(){
-    unid = cont;
-        if(cont>= 10){
-            dece++;
-            cont = 0;
-            //unid = 0;
-            if(dece >= 10){
-                cent++;
-                dece = 0;
-                if(cent >=10){
-                    cent = 0;
-                }
-            }
-        }
-}
-void decremento_time(void){
-    unid = cont;
-    if(unid < 0){
-        cont = 9;
-        unid = cont;
-        dece--;
-        if(dece < 0){
-            dece = 9;
-            //cont = 9;
-            cent--;
-            if(cent < 0){
-                cent = 0;
-                unid = 0;
-                cont = 0;
-                dece = 0;
-                state = false;
-            }
-        }
+void __interrupt() INT_TMR0(void){
+    if(INTCONbits.T0IF == 1){
+        INTCONbits.T0IF = 0;    //Limpiar la bandera de interrupcion
+        TMR0 = 131;             //Se carga nuevamente el valor para 1ms
+        milisegundos++;
     }
 }
-void mensajes(void){
-    //Variables que se guardan
-    static int guarda_u, guarda_d, guarda_c;
-    guarda_u = unid;
-    guarda_d = dece;
-    guarda_c = cent;
-   switch(mensaje_display){
-       case mensaje_espera:
-           //mens_off = milisegundos;
-           //while(milisegundos - mens_off <= TIEMPO_MENS_OFF){
-               unid = 2;
-               dece = 2;
-               cent = 0;
-               visualizar(VER_ESPERA,on_unidad, on_decena, on_centena);
-           //}
-           break;
-       case mensaje_35w:
-           mens_anterior_35w = milisegundos;
-           while(milisegundos - mens_anterior_35w <= TIEMPO_MENS_35W){
-               unid = 5;
-               dece = 3;
-               visualizar(VER_NUMEROS,on_unidad,on_decena,off);
-           }
-           anterior_35w = milisegundos;
-           while(milisegundos - anterior_35w <= TIEMPO_MENS_35W){
-               unid = 1;
-               dece = 0;
-               visualizar(VER_ESPERA,on_unidad,on_decena,off);
-           }
-           mensaje_display = mensaje_espera;
-           break;
-       case mensaje_50w:
-           mens_anterior_50w = milisegundos;
-           while(milisegundos - mens_anterior_50w <= TIEMPO_MENS_50W){
-               unid = 0;
-               dece = 5;
-               visualizar(VER_NUMEROS, on_unidad, on_decena, off);
-           }
-           
-           anterior_50w = milisegundos;
-           while(milisegundos - anterior_50w <= TIEMPO_MENS_50W){
-               unid = 1;
-               dece = 0;
-               visualizar(VER_ESPERA,on_unidad, on_decena, off);
-           }
-           mensaje_display = mensaje_espera;
-           break;
-   }
-   unid = guarda_u;
-   dece = guarda_d;
-   cent = guarda_c;
+uint32_t millis(void){
+    uint32_t m;
+    INTCONbits.GIE = 0;
+    m = milisegundos;
+    INTCONbits.GIE = 1;
+    return m;
+}
+void visualizar_display(void){
+    static uint32_t last_mux = 0;
+    uint32_t now = millis();
+    //Multiplexacion cada 5ms(200Hz de tasa de refresco total)
+    if((now - last_mux) >= MUX_TIME){
+        last_mux = now;
+        //Apagar todos los display
+        PINES_MUX &= ~DISPLAY_MASK;  // Solo afecta bits de displays
+        //Mostrar el caracter actual
+        PORT_VISUALIZADOR = DATOS[display_buffer[display_state]];//Aqui dice que primero ingrese al array display_buffer tomara un numero y con ese numero tomara el valor del array DATOS 
+        //Activar el display correspondiente
+        PINES_MUX |= ~(1 << display_state); // Enciende el bit correspondiente para cada display con seguridad implementando un or como mascara esto evitara el ghosting
+        //Avanzar al siguiente display
+        display_state = (display_state + 1) % NUM_DISPLAY; //Con esta sentencia aumente display_state 1,2,3,4 a la vez controla el limite que es la cantidad de display utilizados cuando llega a 4 automaticamente lo lleva al primer displey   
+    }
+}
+void main(void){
+    configurar_hardware();
+    configurar_tmr0();
+    while(true){
+        visualizar_display();
+    }
 }

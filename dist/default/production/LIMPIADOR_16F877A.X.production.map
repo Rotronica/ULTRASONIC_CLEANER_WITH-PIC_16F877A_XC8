@@ -6,10 +6,10 @@ Linker command line:
   --edf=C:\Program Files\Microchip\xc8\v2.46\pic\dat\20240104201356_en.msgs \
   -cn -h+dist/default/production\LIMPIADOR_16F877A.X.production.sym \
   --cmf=dist/default/production\LIMPIADOR_16F877A.X.production.cmf -z \
-  -Q16F877A -oC:\Users\USUARIO\AppData\Local\Temp\xcAscpg.\driver_tmp_3.o \
+  -Q16F877A -oC:\Users\USUARIO\AppData\Local\Temp\xcBsc38.1\driver_tmp_3.o \
   --defsym=__MPLAB_BUILD=1 --fixupoverflow=error \
   -Mdist/default/production/LIMPIADOR_16F877A.X.production.map \
-  --md=C:\Users\USUARIO\AppData\Local\Temp\xcAscpg.\driver_tmp_0.dat -E1 \
+  --md=C:\Users\USUARIO\AppData\Local\Temp\xcBsc38.1\driver_tmp_0.dat -E1 \
   -ver=XC8 Compiler --acfsm=1493 -ACODE=00h-07FFhx4 -ASTRCODE=00h-01FFFh \
   -ASTRING=00h-0FFhx32 -ACONST=00h-0FFhx32 -AENTRY=00h-0FFhx32 \
   -ACOMMON=070h-07Fh -ABANK0=020h-06Fh -ABANK1=0A0h-0EFh \
@@ -22,7 +22,7 @@ Linker command line:
   -DSTRCODE=2 -DSTRING=2 -DCONST=2 -DENTRY=2 \
   -preset_vec=00h,intentry=04h,sivt,init,end_init -ppowerup=CODE \
   -pcinit=CODE -pfunctab=ENTRY -k \
-  C:\Users\USUARIO\AppData\Local\Temp\xcAscpg.\driver_tmp_12.o \
+  C:\Users\USUARIO\AppData\Local\Temp\xcBsc38.1\driver_tmp_12.o \
   dist/default/production\LIMPIADOR_16F877A.X.production.o 
 
 Object code version is 3.11
@@ -32,7 +32,7 @@ Machine type is 16F877A
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\USUARIO\AppData\Local\Temp\xcAscpg.\driver_tmp_12.o
+C:\Users\USUARIO\AppData\Local\Temp\xcBsc38.1\driver_tmp_12.o
                 end_init                              C        C        3        8       0
                 reset_vec                             0        0        3        0       0
                 config                             2007     2007        1        0       4
@@ -40,31 +40,32 @@ dist/default/production\LIMPIADOR_16F877A.X.production.o
                 cinit                                 F        F       1A        8       0
                 intentry                              4        4        8        8       0
                 config                             2007     2007        1        0       4
-                text16                              569      569       1E      944       0
-                text15                              5CF      5CF        9      944       0
-                text14                              4A2      4A2       2C      944       0
-                text13                              3FA      3FA       59        8       0
-                text12                              587      587       15      944       0
-                text11                              2A4      2A4       76        8       0
-                text10                              1FD      1FD       A7        8       0
-                text9                               4CE      4CE       2A      944       0
-                text8                               4F8      4F8       29      944       0
-                text7                               154      154       A9        8       0
-                text6                               5AF      5AF       11      944       0
-                text5                               5C0      5C0        F      944       0
-                text4                               38F      38F       6B        8       0
-                text3                                29       29      12B        8       0
-                text2                               31A      31A       75        8       0
-                text1                               521      521       26      944       0
-                maintext                            547      547       22      944       0
+                text17                              596      596       1E      9A0       0
+                text16                              5ED      5ED       10      9A0       0
+                text15                              60C      60C        9      9A0       0
+                text14                              525      525       29      9A0       0
+                text13                              4FC      4FC       29      9A0       0
+                text12                              420      420       59        8       0
+                text11                              5B4      5B4       15      9A0       0
+                text10                              2CA      2CA       76        8       0
+                text9                               16F      16F       BA        8       0
+                text8                               5DC      5DC       11      9A0       0
+                text7                               5FD      5FD        F      9A0       0
+                text6                               4D0      4D0       2C      9A0       0
+                text5                               3B5      3B5       6B        8       0
+                text4                                29       29      146        8       0
+                text3                               229      229       A1        8       0
+                text2                               340      340       75        8       0
+                text1                               54E      54E       26      9A0       0
+                maintext                            574      574       22      9A0       0
                 cstackBANK0                          20       20       1E       20       1
                 cstackCOMMON                         70       70        C       70       1
-                clrtext                             5D8      5D8        8      944       0
-                inittext                            59C      59C       13      944       0
+                clrtext                             615      615        8      9A0       0
+                inittext                            5C9      5C9       13      9A0       0
                 dataBANK0                            5A       5A        7       20       1
                 bssBANK0                             3E       3E       1C       20       1
-                strings                             453      453       4F      8A6       0
-                idataBANK0                          5E0      5E0        7      944       0
+                strings                             479      479       57      8F2       0
+                idataBANK0                          61D      61D        7      9A0       0
 
 TOTAL           Name                               Link     Load   Length     Space
         CLASS   CODE           
@@ -72,31 +73,32 @@ TOTAL           Name                               Link     Load   Length     Sp
                 cinit                                 F        F       1A         0
                 intentry                              4        4        8         0
                 reset_vec                             0        0        3         0
-                text16                              569      569       1E         0
-                text15                              5CF      5CF        9         0
-                text14                              4A2      4A2       2C         0
-                text13                              3FA      3FA       59         0
-                text12                              587      587       15         0
-                text11                              2A4      2A4       76         0
-                text10                              1FD      1FD       A7         0
-                text9                               4CE      4CE       2A         0
-                text8                               4F8      4F8       29         0
-                text7                               154      154       A9         0
-                text6                               5AF      5AF       11         0
-                text5                               5C0      5C0        F         0
-                text4                               38F      38F       6B         0
-                text3                                29       29      12B         0
-                text2                               31A      31A       75         0
-                text1                               521      521       26         0
-                maintext                            547      547       22         0
-                clrtext                             5D8      5D8        8         0
-                inittext                            59C      59C       13         0
-                idataBANK0                          5E0      5E0        7         0
+                text17                              596      596       1E         0
+                text16                              5ED      5ED       10         0
+                text15                              60C      60C        9         0
+                text14                              525      525       29         0
+                text13                              4FC      4FC       29         0
+                text12                              420      420       59         0
+                text11                              5B4      5B4       15         0
+                text10                              2CA      2CA       76         0
+                text9                               16F      16F       BA         0
+                text8                               5DC      5DC       11         0
+                text7                               5FD      5FD        F         0
+                text6                               4D0      4D0       2C         0
+                text5                               3B5      3B5       6B         0
+                text4                                29       29      146         0
+                text3                               229      229       A1         0
+                text2                               340      340       75         0
+                text1                               54E      54E       26         0
+                maintext                            574      574       22         0
+                clrtext                             615      615        8         0
+                inittext                            5C9      5C9       13         0
+                idataBANK0                          61D      61D        7         0
 
         CLASS   STRCODE        
 
         CLASS   STRING         
-                strings                             453      453       4F         0
+                strings                             479      479       57         0
 
         CLASS   CONST          
 
@@ -145,11 +147,11 @@ TOTAL           Name                               Link     Load   Length     Sp
 SEGMENTS        Name                           Load    Length   Top    Selector   Space  Class     Delta
 
                 reset_vec                      000000  000003  000003         0       0  CODE        2
-                intentry                       000004  00044F  000453         8       0  CODE        2
+                intentry                       000004  000475  000479         8       0  CODE        2
                 cstackBANK0                    000020  000041  000061        20       1  BANK0       1
                 cstackCOMMON                   000070  00000C  00007C        70       1  COMMON      1
-                strings                        000453  00004F  0004A2       8A6       0  STRING      2
-                text14                         0004A2  000145  0005E7       944       0  CODE        2
+                strings                        000479  000057  0004D0       8F2       0  STRING      2
+                text6                          0004D0  000154  000624       9A0       0  CODE        2
 
 
 UNUSED ADDRESS RANGES
@@ -160,13 +162,13 @@ UNUSED ADDRESS RANGES
         BANK2            0110-016F             60           1
         BANK3            0190-01EF             60           1
         CODE             0003-0003              1           2
-                         05E7-1FFF            800
+                         0624-1FFF            800
         COMMON           007C-007D              2           1
         CONST            0003-0003              1           2
-                         05E7-1FFF            100
+                         0624-1FFF            100
         EEDATA           2100-21FF            100           2
         ENTRY            0003-0003              1           2
-                         05E7-1FFF            100
+                         0624-1FFF            100
         IDLOC            2000-2003              4           2
         RAM              0061-006F              F           1
                          00A0-00EF             50
@@ -177,17 +179,17 @@ UNUSED ADDRESS RANGES
         SFR2             0100-010F             10           1
         SFR3             0180-018F             10           1
         STRCODE          0003-0003              1           2
-                         05E7-1FFF           1A19
+                         0624-1FFF           19DC
         STRING           0003-0003              1           2
-                         05E7-1FFF            100
+                         0624-1FFF            100
 
                                   Symbol Table
 
 ?___awmod                                     cstackCOMMON 0072
 ?_millis                                      cstackCOMMON 0072
-_DATOS                                        strings      0459
+_DATOS                                        strings      047F
 _INTCONbits                                   (abs)        000B
-_INT_TMR0                                     text16       0569
+_INT_TMR0                                     text17       0596
 _OPTION_REGbits                               (abs)        0081
 _PORTA                                        (abs)        0005
 _PORTB                                        (abs)        0006
@@ -232,7 +234,7 @@ __Hsfr1                                       sfr1         0000
 __Hsfr2                                       sfr2         0000
 __Hsfr3                                       sfr3         0000
 __Hsivt                                       sivt         000C
-__Hspace_0                                    (abs)        05E7
+__Hspace_0                                    (abs)        0624
 __Hspace_1                                    (abs)        007C
 __Hspace_2                                    (abs)        0000
 __Hspace_3                                    (abs)        0000
@@ -280,10 +282,10 @@ __Lspace_4                                    (abs)        0000
 __Lstack                                      stack        0000
 __Lstrings                                    strings      0000
 __Ltext                                       text         0000
-__S0                                          (abs)        05E7
+__S0                                          (abs)        0624
 __S1                                          (abs)        007C
 __S3                                          (abs)        0000
-___awmod                                      text13       03FA
+___awmod                                      text12       0420
 ___awmod@counter                              cstackCOMMON 0076
 ___awmod@dividend                             cstackCOMMON 0074
 ___awmod@divisor                              cstackCOMMON 0072
@@ -299,107 +301,112 @@ ___stack_hi                                   stack        0000
 ___stack_lo                                   stack        0000
 ___stackhi                                    (abs)        0000
 ___stacklo                                    (abs)        0000
-__end_of_DATOS                                strings      0484
-__end_of_INT_TMR0                             text16       0587
-__end_of___awmod                              text13       0453
+__end_of_DATOS                                strings      04AF
+__end_of_INT_TMR0                             text17       05B4
+__end_of___awmod                              text12       0479
 __end_of__initialization                      cinit        0025
-__end_of__stringtab                           strings      0459
-__end_of_actualizar_temporizador              text2        038F
-__end_of_botones                              text7        01FD
-__end_of_configurar_hardware                  text6        05C0
-__end_of_configurar_tmr0                      text5        05CF
-__end_of_convertir_tiempo_a_display           text15       05D8
-__end_of_decremento_temporizador              text9        04F8
-__end_of_diferentes_mensajes                  text3        0154
-__end_of_efecto_titilar                       text4        03FA
-__end_of_incremento_temporizador              text8        0521
-__end_of_main                                 maintext     0569
-__end_of_millis                               text12       059C
-__end_of_mostrar_mensajes                     text14       04CE
-__end_of_proceso_on                           text1        0547
-__end_of_verificar_fin_temporizador           text10       02A4
-__end_of_visualizar_display                   text11       031A
-__end_ofdiferentes_mensajes@ms_inicio_proceso strings      0490
-__end_ofdiferentes_mensajes@ms_para_35w       strings      0496
-__end_ofdiferentes_mensajes@ms_para_50w       strings      0493
-__end_ofdiferentes_mensajes@sec1              strings      04A2
-__end_ofdiferentes_mensajes@sec2              strings      049F
-__end_ofdiferentes_mensajes@sec3              strings      049C
-__end_ofdiferentes_mensajes@sec4              strings      0499
-__end_ofefecto_titilar@apagado                strings      048D
-__end_ofverificar_fin_temporizador@MS_CLEAR   strings      0487
-__end_ofverificar_fin_temporizador@MS_OFF     strings      048A
+__end_of__stringtab                           strings      047F
+__end_of_actualizar_temporizador              text2        03B5
+__end_of_botones                              text9        0229
+__end_of_condiciones_iniciales                text16       05FD
+__end_of_configurar_hardware                  text8        05ED
+__end_of_configurar_tmr0                      text7        060C
+__end_of_convertir_tiempo_a_display           text15       0615
+__end_of_decremento_temporizador              text14       054E
+__end_of_diferentes_mensajes                  text4        016F
+__end_of_efecto_titilar                       text5        0420
+__end_of_incremento_temporizador              text13       0525
+__end_of_main                                 maintext     0596
+__end_of_millis                               text11       05C9
+__end_of_mostrar_mensajes                     text6        04FC
+__end_of_proceso_on                           text1        0574
+__end_of_verificar_fin_temporizador           text3        02CA
+__end_of_visualizar_display                   text10       0340
+__end_ofdiferentes_mensajes@ms_inicio_proceso strings      04BB
+__end_ofdiferentes_mensajes@ms_para_35w       strings      04C1
+__end_ofdiferentes_mensajes@ms_para_50w       strings      04BE
+__end_ofdiferentes_mensajes@sec1              strings      04D0
+__end_ofdiferentes_mensajes@sec2              strings      04CD
+__end_ofdiferentes_mensajes@sec3              strings      04CA
+__end_ofdiferentes_mensajes@sec4              strings      04C7
+__end_ofdiferentes_mensajes@sec5              strings      04C4
+__end_ofefecto_titilar@apagado                strings      04B8
+__end_ofverificar_fin_temporizador@MS_CLEAR   strings      04B2
+__end_ofverificar_fin_temporizador@MS_OFF     strings      04B5
 __initialization                              cinit        000F
 __pbssBANK0                                   bssBANK0     003E
 __pcstackBANK0                                cstackBANK0  0020
 __pcstackCOMMON                               cstackCOMMON 0070
 __pdataBANK0                                  dataBANK0    005A
-__pidataBANK0                                 idataBANK0   05E0
+__pidataBANK0                                 idataBANK0   061D
 __pintentry                                   intentry     0004
-__pmaintext                                   maintext     0547
-__pstrings                                    strings      0453
-__ptext1                                      text1        0521
-__ptext10                                     text10       01FD
-__ptext11                                     text11       02A4
-__ptext12                                     text12       0587
-__ptext13                                     text13       03FA
-__ptext14                                     text14       04A2
-__ptext15                                     text15       05CF
-__ptext16                                     text16       0569
-__ptext2                                      text2        031A
-__ptext3                                      text3        0029
-__ptext4                                      text4        038F
-__ptext5                                      text5        05C0
-__ptext6                                      text6        05AF
-__ptext7                                      text7        0154
-__ptext8                                      text8        04F8
-__ptext9                                      text9        04CE
-__stringbase                                  strings      0458
-__stringtab                                   strings      0453
-_actualizar_temporizador                      text2        031A
-_botones                                      text7        0154
+__pmaintext                                   maintext     0574
+__pstrings                                    strings      0479
+__ptext1                                      text1        054E
+__ptext10                                     text10       02CA
+__ptext11                                     text11       05B4
+__ptext12                                     text12       0420
+__ptext13                                     text13       04FC
+__ptext14                                     text14       0525
+__ptext15                                     text15       060C
+__ptext16                                     text16       05ED
+__ptext17                                     text17       0596
+__ptext2                                      text2        0340
+__ptext3                                      text3        0229
+__ptext4                                      text4        0029
+__ptext5                                      text5        03B5
+__ptext6                                      text6        04D0
+__ptext7                                      text7        05FD
+__ptext8                                      text8        05DC
+__ptext9                                      text9        016F
+__stringbase                                  strings      047E
+__stringtab                                   strings      0479
+_actualizar_temporizador                      text2        0340
+_botones                                      text9        016F
 _centenas                                     dataBANK0    005E
-_configurar_hardware                          text6        05AF
-_configurar_tmr0                              text5        05C0
+_condiciones_iniciales                        text16       05ED
+_configurar_hardware                          text8        05DC
+_configurar_tmr0                              text7        05FD
 _cont                                         bssBANK0     0057
-_convertir_tiempo_a_display                   text15       05CF
+_convertir_tiempo_a_display                   text15       060C
 _decenas                                      dataBANK0    005F
-_decremento_temporizador                      text9        04CE
-_diferentes_mensajes                          text3        0029
+_decremento_temporizador                      text14       0525
+_diferentes_mensajes                          text4        0029
 _display_buffer                               dataBANK0    005A
 _display_state                                bssBANK0     0059
-_efecto_titilar                               text4        038F
-_incremento_temporizador                      text8        04F8
-_main                                         maintext     0547
+_efecto_titilar                               text5        03B5
+_incremento_temporizador                      text13       04FC
+_main                                         maintext     0574
 _milisegundos                                 bssBANK0     004E
-_millis                                       text12       0587
+_millis                                       text11       05B4
 _modo_proceso                                 bssBANK0     0054
-_mostrar_mensajes                             text14       04A2
-_mostrar_mensajes$238                         cstackCOMMON 0075
+_mostrar_mensajes                             text6        04D0
+_mostrar_mensajes$248                         cstackCOMMON 0075
 _ms_state                                     bssBANK0     0053
 _ms_tiempo                                    bssBANK0     0055
 _on_off                                       bssBANK0     0058
-_proceso_on                                   text1        0521
+_proceso_on                                   text1        054E
 _temporizador_activo                          dataBANK0    0060
 _unidades                                     bssBANK0     0056
-_verificar_fin_temporizador                   text10       01FD
-_verificar_fin_temporizador$289               cstackBANK0  0030
-_visualizar_display                           text11       02A4
+_verificar_fin_temporizador                   text3        0229
+_verificar_fin_temporizador$300               cstackBANK0  0030
+_visualizar_display                           text10       02CA
 actualizar_temporizador@last_second           bssBANK0     003E
 actualizar_temporizador@now                   cstackBANK0  003A
 btemp                                         (abs)        007E
-clear_ram0                                    clrtext      05D8
+clear_ram0                                    clrtext      0615
 diferentes_mensajes@last_change               bssBANK0     0046
 diferentes_mensajes@mostrar_ms                bssBANK0     0052
-diferentes_mensajes@ms_inicio_proceso         strings      048D
-diferentes_mensajes@ms_para_35w               strings      0493
-diferentes_mensajes@ms_para_50w               strings      0490
+diferentes_mensajes@ms_inicio_proceso         strings      04B8
+diferentes_mensajes@ms_para_35w               strings      04BE
+diferentes_mensajes@ms_para_50w               strings      04BB
 diferentes_mensajes@now                       cstackBANK0  0032
-diferentes_mensajes@sec1                      strings      049F
-diferentes_mensajes@sec2                      strings      049C
-diferentes_mensajes@sec3                      strings      0499
-diferentes_mensajes@sec4                      strings      0496
-efecto_titilar@apagado                        strings      048A
+diferentes_mensajes@sec1                      strings      04CD
+diferentes_mensajes@sec2                      strings      04CA
+diferentes_mensajes@sec3                      strings      04C7
+diferentes_mensajes@sec4                      strings      04C4
+diferentes_mensajes@sec5                      strings      04C1
+efecto_titilar@apagado                        strings      04B5
 efecto_titilar@last_change                    bssBANK0     0042
 efecto_titilar@longitud                       cstackBANK0  0020
 efecto_titilar@mensaje                        cstackBANK0  002D
@@ -407,8 +414,8 @@ efecto_titilar@mostrar                        dataBANK0    005D
 efecto_titilar@now                            cstackBANK0  0029
 efecto_titilar@tiempo                         cstackBANK0  0021
 end_of_initialization                         cinit        0025
-init_fetch0                                   inittext     059C
-init_ram0                                     inittext     05A0
+init_fetch0                                   inittext     05C9
+init_ram0                                     inittext     05CD
 interrupt_function                            intentry     0004
 intlevel0                                     functab      0000
 intlevel1                                     functab      0000
@@ -424,8 +431,8 @@ reset_vec                                     reset_vec    0000
 saved_w                                       (abs)        007E
 start                                         init         000C
 start_initialization                          cinit        000F
-verificar_fin_temporizador@MS_CLEAR           strings      0484
-verificar_fin_temporizador@MS_OFF             strings      0487
+verificar_fin_temporizador@MS_CLEAR           strings      04AF
+verificar_fin_temporizador@MS_OFF             strings      04B2
 verificar_fin_temporizador@last_change        cstackBANK0  002C
 verificar_fin_temporizador@mostrar_dos_ms     cstackBANK0  0035
 verificar_fin_temporizador@now                cstackBANK0  0031
@@ -438,44 +445,46 @@ MODULE INFORMATION
 
 Module		Function		Class		Link	Load	Size
 shared
-		diferentes_mensajes@sec1		STRING         	049F	0000	3
-		diferentes_mensajes@sec4		STRING         	0496	0000	3
-		__stringtab    		STRING         	0453	0000	6
-		diferentes_mensajes@ms_para_50w		STRING         	0490	0000	3
-		diferentes_mensajes@ms_para_35w		STRING         	0493	0000	3
-		efecto_titilar@apagado		STRING         	048A	0000	3
-		diferentes_mensajes@sec3		STRING         	0499	0000	3
-		verificar_fin_temporizador@MS_OFF		STRING         	0487	0000	3
+		diferentes_mensajes@sec1		STRING         	04CD	0000	3
+		diferentes_mensajes@sec4		STRING         	04C4	0000	3
+		__stringtab    		STRING         	0479	0000	6
+		diferentes_mensajes@ms_para_50w		STRING         	04BB	0000	3
+		diferentes_mensajes@ms_para_35w		STRING         	04BE	0000	3
+		efecto_titilar@apagado		STRING         	04B5	0000	3
+		diferentes_mensajes@sec3		STRING         	04C7	0000	3
+		verificar_fin_temporizador@MS_OFF		STRING         	04B2	0000	3
 		__initialization		CODE           	000F	0000	22
-		diferentes_mensajes@sec2		STRING         	049C	0000	3
-		_DATOS         		STRING         	0459	0000	43
-		verificar_fin_temporizador@MS_CLEAR		STRING         	0484	0000	3
-		diferentes_mensajes@ms_inicio_proceso		STRING         	048D	0000	3
+		diferentes_mensajes@sec2		STRING         	04CA	0000	3
+		diferentes_mensajes@sec5		STRING         	04C1	0000	3
+		_DATOS         		STRING         	047F	0000	48
+		verificar_fin_temporizador@MS_CLEAR		STRING         	04AF	0000	3
+		diferentes_mensajes@ms_inicio_proceso		STRING         	04B8	0000	3
 
-shared estimated size: 101
+shared estimated size: 109
 
 Codigo_fuente.c
-		_configurar_hardware		CODE           	05AF	0000	17
-		_incremento_temporizador		CODE           	04F8	0000	41
-		_millis        		CODE           	0587	0000	21
-		_mostrar_mensajes		CODE           	04A2	0000	44
-		_verificar_fin_temporizador		CODE           	01FD	0000	167
-		_main          		CODE           	0547	0000	34
-		_proceso_on    		CODE           	0521	0000	38
-		_actualizar_temporizador		CODE           	031A	0000	117
-		_configurar_tmr0		CODE           	05C0	0000	15
-		_convertir_tiempo_a_display		CODE           	05CF	0000	9
-		_visualizar_display		CODE           	02A4	0000	118
-		_INT_TMR0      		CODE           	0569	0000	30
-		_decremento_temporizador		CODE           	04CE	0000	42
-		_botones       		CODE           	0154	0000	169
-		_diferentes_mensajes		CODE           	0029	0000	299
-		_efecto_titilar		CODE           	038F	0000	107
+		_configurar_hardware		CODE           	05DC	0000	17
+		_incremento_temporizador		CODE           	04FC	0000	41
+		_millis        		CODE           	05B4	0000	21
+		_mostrar_mensajes		CODE           	04D0	0000	44
+		_verificar_fin_temporizador		CODE           	0229	0000	161
+		_main          		CODE           	0574	0000	34
+		_proceso_on    		CODE           	054E	0000	38
+		_actualizar_temporizador		CODE           	0340	0000	117
+		_configurar_tmr0		CODE           	05FD	0000	15
+		_convertir_tiempo_a_display		CODE           	060C	0000	9
+		_visualizar_display		CODE           	02CA	0000	118
+		_condiciones_iniciales		CODE           	05ED	0000	16
+		_INT_TMR0      		CODE           	0596	0000	30
+		_decremento_temporizador		CODE           	0525	0000	41
+		_botones       		CODE           	016F	0000	186
+		_diferentes_mensajes		CODE           	0029	0000	326
+		_efecto_titilar		CODE           	03B5	0000	107
 
-Codigo_fuente.c estimated size: 1268
+Codigo_fuente.c estimated size: 1321
 
 C:\Program Files\Microchip\xc8\v2.46\pic\sources\c99\common\awmod.c
-		___awmod       		CODE           	03FA	0000	89
+		___awmod       		CODE           	0420	0000	89
 
 C:\Program Files\Microchip\xc8\v2.46\pic\sources\c99\common\awmod.c estimated size: 89
 

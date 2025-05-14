@@ -1917,15 +1917,17 @@ extern __bank0 __bit __timeout;
 
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.46\\pic\\include\\c99\\stdbool.h" 1 3
 # 17 "Codigo_fuente.c" 2
-# 32 "Codigo_fuente.c"
+# 34 "Codigo_fuente.c"
 uint32_t milisegundos = 0;
 uint8_t display_state = 0;
 _Bool on_off = 0;
 static _Bool temporizador_activo = 1;
 static uint8_t cont = 0;
+
 static uint8_t unidades = 0;
 static uint8_t decenas = 8;
 static uint8_t centenas = 1;
+
 
 static const uint8_t DATOS[] = {
 
@@ -1976,19 +1978,29 @@ static const uint8_t DATOS[] = {
 
     0xFE,
     0xF7,
-    0xF9
+    0xF9,
+    0xE7,
+    0xFC,
+    0xDE,
+    0xF3,
+    0xF6
 };
+
 typedef enum{
     ms_tiempo_ninguno = 0,
     ms_tiempo_35w,
     ms_tiempo_50w
 }MENSAJE_TIEMPO;
 MENSAJE_TIEMPO ms_tiempo = ms_tiempo_ninguno;
+
+
 typedef enum{
-    modo_35w = 0,
+    modo_ninguno = 0,
+    modo_35w,
     modo_50w
 }MODO;
-MODO modo_proceso = modo_35w;
+MODO modo_proceso = modo_ninguno;
+
 
 typedef enum{
     MS_INIT = 0,
@@ -1997,6 +2009,7 @@ typedef enum{
     MS_ON
 }MENSAJES;
 MENSAJES ms_state = MS_INIT;
+
 
 typedef enum{
     CHAR_0 = 0,
@@ -2011,7 +2024,12 @@ typedef enum{
     CHAR_GUION = 36,
     CHAR_GSOMB = 40,
     CHAR_GBAJO = 41,
-    CHAR_BVERTICAL = 42
+    CHAR_BVERTICAL = 42,
+    CHAR_EZIZBAJO = 43,
+    CHAR_EZDEARRIBA = 44,
+    CHAR_EZIZARRIBA = 45,
+    CHAR_EZDEABAJO = 46,
+    CHAR_SOM_GBAJO = 47
 }CARACTER;
 CARACTER display_buffer[3] = {CHAR_O,CHAR_F,CHAR_F};
 
@@ -2025,7 +2043,7 @@ uint32_t millis(void);
 void __attribute__((picinterrupt(("")))) INT_TMR0(void);
 void visualizar_display(void);
 void mostrar_mensajes(const CARACTER *mensaje, uint8_t longitud);
-void deferentes_mensajes(void);
+void diferentes_mensajes(void);
 void efecto_titilar(const CARACTER *mensaje, uint8_t longitud, uint32_t tiempo);
 void botones(void);
 void proceso_on(void);
@@ -2034,13 +2052,21 @@ void convertir_tiempo_a_display(void);
 void verificar_fin_temporizador(void);
 void incremento_temporizador(void);
 void decremento_temporizador(void);
+void condiciones_iniciales(void);
+
+
+
+
+
 
 void configurar_hardware(void){
+
     TRISA = 0x00;
     TRISD = 0x00;
     TRISC = 0X00;
     OPTION_REGbits.nRBPU = 0;
     TRISB = 0XFF;
+
     PORTA = 0x07;
     PORTD = 0xFF;
     PORTB = 0X00;
@@ -2063,6 +2089,8 @@ void __attribute__((picinterrupt(("")))) INT_TMR0(void){
         milisegundos++;
     }
 }
+
+
 uint32_t millis(void){
     uint32_t m;
     INTCONbits.GIE = 0;
@@ -2070,6 +2098,8 @@ uint32_t millis(void){
     INTCONbits.GIE = 1;
     return m;
 }
+
+
 void visualizar_display(void){
     static uint32_t last_mux = 0;
     uint32_t now = millis();
@@ -2086,36 +2116,46 @@ void visualizar_display(void){
         display_state = (display_state + 1) % 3;
     }
 }
+
+
 void mostrar_mensajes(const CARACTER *mensaje, uint8_t longitud){
     for(uint8_t i = 0; i < 3; i++){
         display_buffer[i] = (i < longitud) ? mensaje[i]: CHAR_CLEAR;
     }
 }
+
+
 void diferentes_mensajes(void){
-    static const CARACTER sec1[] = {CHAR_GBAJO,CHAR_GBAJO,CHAR_GBAJO};
-    static const CARACTER sec2[] = {CHAR_CLEAR,CHAR_CLEAR,CHAR_BVERTICAL};
-    static const CARACTER sec3[] = {CHAR_GSOMB,CHAR_GSOMB,CHAR_GSOMB};
-    static const CARACTER sec4[] = {CHAR_I,CHAR_CLEAR,CHAR_CLEAR};
+
+    static const CARACTER sec1[] = {CHAR_GSOMB,CHAR_SOM_GBAJO,CHAR_GBAJO};
+    static const CARACTER sec2[] = {CHAR_EZIZARRIBA,CHAR_CLEAR,CHAR_EZDEABAJO};
+    static const CARACTER sec3[] = {CHAR_I,CHAR_CLEAR,CHAR_BVERTICAL};
+    static const CARACTER sec4[] = {CHAR_EZIZBAJO,CHAR_CLEAR,CHAR_EZDEARRIBA};
+    static const CARACTER sec5[] = {CHAR_GBAJO,CHAR_SOM_GBAJO,CHAR_GSOMB};
+
 
     static const CARACTER ms_para_35w[] = {CHAR_P,CHAR_3,CHAR_5};
     static const CARACTER ms_para_50w[] = {CHAR_P,CHAR_5,CHAR_0};
     static const CARACTER ms_inicio_proceso[] = {CHAR_CLEAR, CHAR_O, CHAR_N};
 
+
     uint32_t now = millis();
     static uint32_t last_change = 0;
     static uint8_t mostrar_ms = 0;
     if(ms_state == MS_INIT && on_off == 0 && ms_tiempo == ms_tiempo_ninguno){
-        if((now - last_change) >= 300){
+        if((now - last_change) >= 200){
             last_change = now;
-            mostrar_ms = (mostrar_ms + 1) % 4;
+            mostrar_ms = (mostrar_ms + 1) % 5;
             switch(mostrar_ms){
                 case 0: mostrar_mensajes(sec1,3); break;
                 case 1: mostrar_mensajes(sec2,3); break;
                 case 2: mostrar_mensajes(sec3,3); break;
                 case 3: mostrar_mensajes(sec4,3); break;
+                case 4: mostrar_mensajes(sec5,3); break;
             }
         }
     }
+
     if(ms_tiempo == ms_tiempo_ninguno){
         switch(ms_state){
         case MS_P35W:
@@ -2128,17 +2168,29 @@ void diferentes_mensajes(void){
             break;
         }
     }
+
+
+
+
     if(ms_tiempo == ms_tiempo_35w && ms_state == MS_INIT){
         convertir_tiempo_a_display();
     }
+
+
+
+
     if(ms_tiempo == ms_tiempo_50w && ms_state == MS_INIT){
         convertir_tiempo_a_display();
     }
+
+
     if(ms_state == MS_ON){
         efecto_titilar(ms_inicio_proceso,3,500);
         if(cont>=5){cont = 0;ms_state = MS_INIT; on_off = !on_off;}
     }
 }
+
+
 void efecto_titilar(const CARACTER *mensaje, uint8_t longitud, uint32_t tiempo){
     static uint32_t last_change = 0;
     static _Bool mostrar = 1;
@@ -2162,11 +2214,13 @@ void botones(void){
     if(PORTBbits.RB1 == 0 && on_off == 0){
         _delay((unsigned long)((20)*(4000000/4000.0)));
         if(PORTBbits.RB1 == 0 && on_off == 0){
-            ms_state = MS_P35W;
-            modo_proceso = modo_35w;
-            if(ms_tiempo != ms_tiempo_ninguno){
-                incremento_temporizador();
+            if(modo_proceso != modo_50w){
+                modo_proceso = modo_35w;
+                ms_state = MS_P35W;
             }
+            if(ms_tiempo != ms_tiempo_ninguno){
+                    incremento_temporizador();
+                }
             while(PORTBbits.RB1 == 0 && on_off == 0){visualizar_display();}
         }
     }
@@ -2174,20 +2228,22 @@ void botones(void){
     if(PORTBbits.RB2 == 0 && on_off == 0){
         _delay((unsigned long)((20)*(4000000/4000.0)));
         if(PORTBbits.RB2 == 0 && on_off == 0){
-            ms_state = MS_P50W;
-            modo_proceso = modo_50w;
+            if(modo_proceso != modo_35w){
+                modo_proceso = modo_50w;
+                ms_state = MS_P50W;
+            }
             if(ms_tiempo != ms_tiempo_ninguno){
                 decremento_temporizador();
             }
             while(PORTBbits.RB2 == 0 && on_off == 0){visualizar_display();}
         }
     }
-    if(PORTBbits.RB0 == 0 ){
+    if(PORTBbits.RB0 == 0 && modo_proceso != modo_ninguno ){
         _delay((unsigned long)((20)*(4000000/4000.0)));
         if(PORTBbits.RB0 == 0){
-
             if(on_off == 0){
                 ms_state = MS_ON;
+
             }else{
                 on_off = !on_off;
             }
@@ -2213,7 +2269,6 @@ void proceso_on(void){
     }else{
         PORTCbits.RC1 = 0;
         PORTCbits.RC0 = 0;
-
     }
 }
 
@@ -2250,6 +2305,10 @@ void actualizar_temporizador(void) {
         convertir_tiempo_a_display();
     }
 }
+
+
+
+
 void convertir_tiempo_a_display(void) {
 
     display_buffer[0] = centenas;
@@ -2258,6 +2317,7 @@ void convertir_tiempo_a_display(void) {
 
     display_buffer[2] = unidades;
 }
+
 void verificar_fin_temporizador(void) {
 
 
@@ -2278,14 +2338,7 @@ void verificar_fin_temporizador(void) {
         if(PORTBbits.RB0 == 0){
             _delay((unsigned long)((20)*(4000000/4000.0)));
             if(PORTBbits.RB0 == 0){
-                on_off = 0;
-                ms_tiempo = ms_tiempo_ninguno;
-                PORTCbits.RC0 = 0;
-                PORTCbits.RC1 = 0;
-                temporizador_activo = 1;
-                unidades = 0;
-                decenas = 8;
-                centenas = 1;
+                condiciones_iniciales();
                 while(PORTBbits.RB0 == 0){visualizar_display();}
             }
         }
@@ -2321,15 +2374,28 @@ void decremento_temporizador(void){
                 centenas --;
                 decenas = 9;
             }else{
-
-                temporizador_activo = 0;
-                verificar_fin_temporizador();
+                condiciones_iniciales();
             }
         }
     }
 
     convertir_tiempo_a_display();
 }
+
+void condiciones_iniciales(void){
+    PORTC = 0X00;
+    on_off = 0;
+    ms_tiempo = ms_tiempo_ninguno;
+    modo_proceso = modo_ninguno;
+    PORTCbits.RC0 = 0;
+    PORTCbits.RC1 = 0;
+    temporizador_activo = 1;
+    unidades = 0;
+    decenas = 8;
+    centenas = 1;
+}
+
+
 void main(void){
     configurar_hardware();
     configurar_tmr0();

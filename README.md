@@ -14,9 +14,9 @@
 1. Cuando se energiza el circuito pasa a un estado inicial de espera.
 2. Puede escoger la potencia que quiera ya sea 35W(P35) o 50W(P50).
 3. Una vez que se escoge la potencia se puede configurar el tiempo de temporización con los botones de 35W y 50W.
-4. Una vez seleccionado la potencia y configurado la temporización se procede a precionar el boton de START y el temporizado empezara a decrementar hasta llegar a 000, oprimir el boton reset para iniciar de nuevo(el boton reset es la configuración por defecto que trae el microcontrolador segun hoja de datos por el pin uno con un configuración pull-down con una resistencia de 1k o 10k ohms).
+4. Una vez seleccionado la potencia y configurado la temporización se procede a presionar el boton de START y el temporizador empezara a decrementar hasta llegar a 000, oprimir el boton reset para iniciar de nuevo(el boton reset es la configuración por defecto que trae el microcontrolador segun hoja de datos por el pin uno con un configuración pull-down con una resistencia de 1k o 10k ohms).
 ---
-### Para ver el funcionamiento del la multiplexacion ingresar:
+### Para ver el funcionamiento del la multiplexación ingresar:
 * [Multiplexación con buffer para caracteres](https://github.com/Rotronica/PIC_16F877A_BUFFER_MUX_MS_XC8.git)
 ### Para ver el funcionamiento en físico
 * [Pruebas en protoboard(Video)](https://www.tiktok.com/@rodtronica/video/7550036934698011910?is_from_webapp=1&sender_device=pc&web_id=7546430987099768376)

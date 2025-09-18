@@ -1,7 +1,7 @@
 # **Código de remplazo para un limpiador ultrasónico utilizando un microcontrolador PIC16F877A**
 
 ## Se tiene el siguiente circuito:
-<img src="circuito.png" alt="Circuito" width="400"/>
+<img src="https://raw.githubusercontent.com/Rotronica/ULTRASONIC_CLEANER_WITH-PIC_16F877A_XC8/refs/heads/master/CIRCUITO.png" width="2000" height="2000" />
 
 ## Como descargar el proyecto:
 1. Ir a la rectangulo verde donde dice "<>code" desplegar la lista y hacer click en Download ZIP(Recomendado)

@@ -4,7 +4,7 @@
 <img src="https://raw.githubusercontent.com/Rotronica/ULTRASONIC_CLEANER_WITH-PIC_16F877A_XC8/refs/heads/master/CIRCUITO.png" width="2000" height="2000" />
 
 ## Como descargar el proyecto:
-1. Ir a la rectangulo verde donde dice "<>code" desplegar la lista y hacer click en Download ZIP(Recomendado)
+1. Ir al rectángulo verde donde dice "<>code" desplegar la lista y hacer click en Download ZIP(Recomendado)
 2. Puede clonar el repositorio utilizando git con el comando:
 `git clone https://github.com/Rotronica/ULTRASONIC_CLEANER_WITH-PIC_16F877A_XC8.git`
 
